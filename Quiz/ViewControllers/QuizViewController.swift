@@ -177,6 +177,7 @@ class QuizViewController: UIViewController {
             button.addTarget(self, action: #selector(answerButtonTapped(_:)), for: .touchUpInside)
             button.isEnabled = true
             button.backgroundColor = .cellColour
+            button.setTitleColor(.textColour, for: .normal)
 
             NSLayoutConstraint.activate([
                 button.heightAnchor.constraint(equalToConstant: Constants.answerButtonHeight)

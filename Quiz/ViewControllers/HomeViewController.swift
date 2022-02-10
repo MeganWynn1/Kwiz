@@ -5,6 +5,11 @@
 //  Created by Megan Wynn on 29/09/2021.
 //
 
+
+// Add to GIT
+// Change to easy medium hard
+// Settings button on main page
+
 import UIKit
 
 class ViewController: UIViewController {
@@ -15,11 +20,15 @@ class ViewController: UIViewController {
     private var logoImageView = UIImageView()
 
     // MARK: - Properties
-    var quizRoundPersistanceService = QuizRoundPersistanceService()
+    var quizRoundManager: QuizRoundResultsManager!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .backgroundColour
+        view.backgroundColor = .backgroundColor
+
+        let quizRoundPersistanceService = QuizRoundCoreDataPersistanceService()
+        quizRoundManager = QuizRoundResultsManager(persistanceService: quizRoundPersistanceService)
+
         setUpNavigationView()
         setupStartButton()
         setupLeaderboardButton()
@@ -29,9 +38,11 @@ class ViewController: UIViewController {
 
     // MARK: - Setup
     private func setUpNavigationView() {
-        navigationController?.navigationBar.barTintColor = .backgroundColour
+        navigationController?.navigationBar.barTintColor = .backgroundColor
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         navigationController?.navigationBar.shadowImage = UIImage()
+
+        navigationController?.navigationBar.tintColor = .titleColor
     }
 
     private func setupLogoImage() {
@@ -48,13 +59,13 @@ class ViewController: UIViewController {
     }
 
     private func setupStartButton() {
-        startButton = QuizMenuButton(title: "START", backgroundColor: .startButtonColour)
+        startButton = QuizMenuButton(title: "START", backgroundColor: .mainColor)
         startButton.translatesAutoresizingMaskIntoConstraints = false
         startButton.addTarget(self, action: #selector(startButtonTapped(_:)), for: .touchUpInside)
     }
 
     private func setupLeaderboardButton() {
-        leaderboardButton = QuizMenuButton(title: "LEADERBOARD", backgroundColor: .resultButtonColour)
+        leaderboardButton = QuizMenuButton(title: "LEADERBOARD", backgroundColor: .mainColor2)
         leaderboardButton.translatesAutoresizingMaskIntoConstraints = false
         leaderboardButton.addTarget(self, action: #selector(leaderboardButtonTapped(_:)), for: .touchUpInside)
     }
@@ -79,13 +90,13 @@ class ViewController: UIViewController {
     // MARK: Objective C Functions
     @objc func startButtonTapped(_ sender: QuizMenuButton) {
         let viewController = MainViewController()
-        viewController.quizRoundPersistanceService = quizRoundPersistanceService
+        viewController.quizRoundManager = quizRoundManager
         navigationController?.pushViewController(viewController, animated: true)
     }
 
     @objc func leaderboardButtonTapped(_ sender: QuizMenuButton) {
         let viewController = LeaderboardViewController()
-        viewController.quizRoundPersistanceService = quizRoundPersistanceService
+        viewController.quizRoundManager = quizRoundManager
         let leaderboardNavigationController = UINavigationController(rootViewController: viewController)
         leaderboardNavigationController.isModalInPresentation = true
         present(leaderboardNavigationController, animated: true, completion: nil)

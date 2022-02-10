@@ -1,5 +1,5 @@
 //
-//  QuizRoundPersistanceService.swift
+//  QuizRoundJSONPersistanceService.swift
 //  Quiz
 //
 //  Created by Megan Wynn on 03/11/2021.
@@ -7,19 +7,24 @@
 
 import Foundation
 
-class QuizRoundPersistanceService {
+protocol QuizRoundPersistanceService {
+    func saveResult(_ result: QuizRoundResult)
+    func getAllQuizRoundResults() -> [QuizRoundResult]
+}
+
+class QuizRoundJSONPersistanceService: QuizRoundPersistanceService {
 
     private let filename = "results.json"
     private var allQuizRoundResults: [QuizRoundResult] = []
 
     init() {
         loadAllQuizRoundResults()
-        print(getDocumentsDirectory().absoluteString)
+        print(QuizRoundJSONPersistanceService.getDocumentsDirectory().absoluteString)
     }
 
     private func loadAllQuizRoundResults() {
 
-        let filename = getDocumentsDirectory().appendingPathComponent(filename)
+        let filename = QuizRoundJSONPersistanceService.getDocumentsDirectory().appendingPathComponent(filename)
 
         do {
             let savedData = try Data(contentsOf: filename)
@@ -36,7 +41,7 @@ class QuizRoundPersistanceService {
     public func saveResult(_ result: QuizRoundResult) {
         allQuizRoundResults.append(result)
 
-        let filename = getDocumentsDirectory().appendingPathComponent(filename)
+        let filename = QuizRoundJSONPersistanceService.getDocumentsDirectory().appendingPathComponent(filename)
 
         do {
             let encoder = JSONEncoder()
@@ -50,7 +55,7 @@ class QuizRoundPersistanceService {
         return allQuizRoundResults
     }
 
-    private func getDocumentsDirectory() -> URL {
+    static func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0]
     }
