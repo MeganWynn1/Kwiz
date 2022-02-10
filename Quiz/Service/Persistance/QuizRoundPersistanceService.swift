@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+protocol QuizRoundPersistanceService {
+    func saveResult(_ result: QuizRoundResult)
+    func getAllQuizRoundResults() -> [QuizRoundResult]
+}

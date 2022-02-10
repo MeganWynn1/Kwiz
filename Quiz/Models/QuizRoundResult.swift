@@ -40,6 +40,8 @@ struct QuizRoundResult: Codable {
     var startTime: Date?
     var endTime: Date?
     var responses: [QuizQuestionResponse]?
+    var percentageCorrect: Int?
+    var difficulty: Int?
 
     var numberOfCorrectAnswers: Int {
         guard let responses = responses else { return 0 }

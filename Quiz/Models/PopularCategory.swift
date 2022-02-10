@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct PopularCategory {
+    var category: String
+    var count: Int
+}

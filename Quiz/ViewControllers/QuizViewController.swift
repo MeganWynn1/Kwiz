@@ -12,7 +12,7 @@ class QuizViewController: UIViewController {
 
     // MARK: - Properties
     var category: QuizCategory!
-    var quizRoundPersistanceService: QuizRoundPersistanceService!
+    var quizRoundManager: QuizRoundResultsManager!
 
     // MARK: - Private Properties
     private let quizQuestionService = QuizQuestionService()
@@ -20,7 +20,6 @@ class QuizViewController: UIViewController {
     private var currentQuestion: QuizQuestion?
     private var questions: [QuizQuestion] = []
     private var score: Int = 0
-    private var numberOfQuestions: Int = 5
     private var percentage: Int?
     private var currentCount: Int?
     private var updateTimer: Timer?
@@ -41,7 +40,7 @@ class QuizViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        assert(quizRoundPersistanceService != nil)
+        assert(quizRoundManager != nil)
         configure()
         completedLabel.alpha = 0.0
         circularProgressView?.alpha = 0.0
@@ -55,9 +54,13 @@ class QuizViewController: UIViewController {
 
     private func configure() {
         guard category != nil else { fatalError("Category must be set") }
-        view.backgroundColor = .backgroundColour
+        view.backgroundColor = .backgroundColor
         title = category.title
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Quit", style: .done, target: self, action: #selector(quitButtonTapped(_:)))
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.titleColor]
+
+        let quitButton = UIBarButtonItem(title: "Quit", style: .done, target: self, action: #selector(quitButtonTapped(_:)))
+        quitButton.tintColor = .titleColor
+        navigationItem.rightBarButtonItem = quitButton
     }
 
     private func setUpCircularProgressBarView(toValue: Float) {
@@ -69,7 +72,7 @@ class QuizViewController: UIViewController {
 
         percentageLabel.translatesAutoresizingMaskIntoConstraints = false
         percentageLabel.textAlignment = .center
-        percentageLabel.textColor = .black
+        percentageLabel.textColor = .titleColor
         percentageLabel.font = UIFont.preferredFont(forTextStyle: .headline).withSize(26)
         view.addSubview(percentageLabel)
 
@@ -89,7 +92,7 @@ class QuizViewController: UIViewController {
 
         guard let collectionView = completedCollectionView else { return }
         collectionView.register(CompletedQuestionsCell.self, forCellWithReuseIdentifier: identifier)
-        collectionView.backgroundColor = .backgroundColour
+        collectionView.backgroundColor = .backgroundColor
 
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -122,10 +125,7 @@ class QuizViewController: UIViewController {
 
     private func getQuestions() {
         showSpinner()
-        if defaults.integer(forKey: "numberOfQuestions") != 0 {
-            numberOfQuestions = defaults.integer(forKey: "numberOfQuestions")
-        }
-        quizQuestionService.getQuestions(category: category.urlString, number: numberOfQuestions) { result in
+        quizQuestionService.getQuestions(category: category.urlString) { result in
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.removeSpinner()
                 self.quizRoundStartDate = Date()
@@ -176,8 +176,6 @@ class QuizViewController: UIViewController {
             button.setTitle(answersArray[num], for: .normal)
             button.addTarget(self, action: #selector(answerButtonTapped(_:)), for: .touchUpInside)
             button.isEnabled = true
-            button.backgroundColor = .cellColour
-            button.setTitleColor(.textColour, for: .normal)
 
             NSLayoutConstraint.activate([
                 button.heightAnchor.constraint(equalToConstant: Constants.answerButtonHeight)
@@ -194,14 +192,14 @@ class QuizViewController: UIViewController {
         view.addSubview(answerStack)
 
         NSLayoutConstraint.activate([
-            answerStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.topPadding),
-            answerStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.sidePadding),
-            answerStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.sidePadding),
-
             questionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             questionLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: Constants.topPadding),
             questionLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: Constants.sidePadding),
-            questionLabel.trailingAnchor.constraint(greaterThanOrEqualTo: view.trailingAnchor, constant: -Constants.sidePadding)
+            questionLabel.trailingAnchor.constraint(greaterThanOrEqualTo: view.trailingAnchor, constant: -Constants.sidePadding),
+
+            answerStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.topPadding),
+            answerStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.sidePadding),
+            answerStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.sidePadding)
         ])
     }
 
@@ -211,6 +209,7 @@ class QuizViewController: UIViewController {
         questionLabel.font = UIFont.preferredFont(forTextStyle: .title1)
         questionLabel.textAlignment = .center
         questionLabel.translatesAutoresizingMaskIntoConstraints = false
+        questionLabel.textColor = .titleColor
     }
 
     private func setupStackView() {
@@ -221,7 +220,7 @@ class QuizViewController: UIViewController {
 
     private func updateAnswerButton(button: UIButton, isCorrect: Bool) {
         button.backgroundColor = isCorrect == true ? .systemGreen : .systemRed
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.textColor, for: .normal)
     }
 
     private func createCompletedView() {
@@ -229,6 +228,7 @@ class QuizViewController: UIViewController {
         completedLabel.textAlignment = .center
         completedLabel.font = UIFont.preferredFont(forTextStyle: .headline).withSize(30)
         completedLabel.text = "COMPLETED!"
+        completedLabel.textColor = .titleColor
         completedLabel.alpha = 1.0
         view.addSubview(completedLabel)
 
@@ -240,12 +240,13 @@ class QuizViewController: UIViewController {
         ])
     }
 
-    private func createDescriptionLabel(score: Int, numberOfQuestions: Int, category: String) {
+    private func createDescriptionLabel(score: Int, category: String) {
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.textAlignment = .center
         descriptionLabel.numberOfLines = 0
+        descriptionLabel.textColor = .titleColor
         descriptionLabel.font = UIFont.preferredFont(forTextStyle: .headline).withSize(25)
-        descriptionLabel.text = "You scored \(score) out of \(numberOfQuestions) in this \(category) quiz"
+        descriptionLabel.text = "You scored \(score) out of 10 in this \(category) quiz"
         view.addSubview(descriptionLabel)
 
         NSLayoutConstraint.activate([
@@ -257,15 +258,17 @@ class QuizViewController: UIViewController {
 
     private func quizRoundEnded() {
         let timeInterval: TimeInterval
-        timeInterval = score == 0 ? 0.1 : ResultHelper.createTimeInterval(score: score, numberOfQuestions: numberOfQuestions)
+        timeInterval = score == 0 ? 0.1 : ResultHelper.createTimeInterval(score: score)
 
         var quizRoundResult = QuizRoundResult()
-        quizRoundResult.resultString = ResultHelper.convertToPercentageString(score: score, numberOfQuestions: numberOfQuestions)
+        quizRoundResult.resultString = ResultHelper.convertToPercentageString(score: score)
         quizRoundResult.category = category.title
         quizRoundResult.startTime = quizRoundStartDate
         quizRoundResult.endTime = quizQuestionResponses.last?.dateCompleted ?? Date()
         quizRoundResult.responses = quizQuestionResponses
-        quizRoundPersistanceService.saveResult(quizRoundResult)
+        quizRoundResult.percentageCorrect = ResultHelper.convertToPercentage(score: score)
+        quizRoundResult.difficulty = defaults.integer(forKey: "difficulty")
+        quizRoundManager.saveResult(quizRoundResult)
 
         self.title = ""
         self.questionLabel.alpha = 0.0
@@ -274,10 +277,10 @@ class QuizViewController: UIViewController {
         }
         self.createCompletedView()
         setupCollectionView()
-        createDescriptionLabel(score: self.score, numberOfQuestions: self.numberOfQuestions, category: category.title)
-        setUpCircularProgressBarView(toValue: ResultHelper.convertToDecimal(score: self.score, numberOfQuestions: self.numberOfQuestions))
+        createDescriptionLabel(score: self.score, category: category.title)
+        setUpCircularProgressBarView(toValue: ResultHelper.convertToDecimal(score: self.score))
         DispatchQueue.main.async {
-            self.percentage = ResultHelper.convertToPercentage(score: self.score, numberOfQuestions: self.numberOfQuestions)
+            self.percentage = ResultHelper.convertToPercentage(score: self.score)
             self.currentCount = 0
             self.updateTimer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(self.updateLabel), userInfo: nil, repeats: true)
         }

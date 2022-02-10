@@ -16,13 +16,13 @@ class CompletedQuestionsCell: UICollectionViewCell {
     // MARK: - Initialise
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setUpCell()
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         setupImage()
         setupLabel()
+        setUpCell()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -31,15 +31,10 @@ class CompletedQuestionsCell: UICollectionViewCell {
 
     // MARK: - Setup
     private func setUpCell() {
-        contentView.backgroundColor = .cellColour
+        contentView.backgroundColor = .white
         layer.cornerRadius = Constants.cellCornerRadius
         contentView.layer.cornerRadius = Constants.cellCornerRadius
         contentView.clipsToBounds = true
-        layer.borderWidth = 0
-        layer.shadowColor = UIColor.gray.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: Constants.shadowOffset)
-        layer.shadowRadius = Constants.shadowRadius
-        layer.shadowOpacity = Constants.shadowOpacity
         layer.masksToBounds = false
     }
 
@@ -60,7 +55,7 @@ class CompletedQuestionsCell: UICollectionViewCell {
         label.font = Constants.font
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.textColor = .textColour
+        label.textColor = .mainColor2
         contentView.addSubview(label)
 
         NSLayoutConstraint.activate([
@@ -78,8 +73,5 @@ extension CompletedQuestionsCell {
         static let labelPadding: CGFloat = 10
         static let font = UIFont.systemFont(ofSize: 16)
         static let cellCornerRadius: CGFloat = 5.0
-        static let shadowRadius: CGFloat = 3.0
-        static let shadowOffset: CGFloat = 2.0
-        static let shadowOpacity: Float = 2.0
     }
 }

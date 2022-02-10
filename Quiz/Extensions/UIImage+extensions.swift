@@ -10,15 +10,15 @@ import UIKit
 public extension UIImage {
 
     static var correct: UIImage! {
-        return UIImage(named: "correct", in: Bundle(for: ViewController.self), with: nil)
+        return UIImage(named: "correct", in: Bundle(for: HomeViewController.self), with: nil)
     }
 
     static var incorrect: UIImage! {
-        return UIImage(named: "incorrect", in: Bundle(for: ViewController.self), with: nil)
+        return UIImage(named: "incorrect", in: Bundle(for: HomeViewController.self), with: nil)
     }
 
     static var appIcon: UIImage! {
-        return UIImage(named: "mainIconImage", in: Bundle(for: ViewController.self), with: nil)
+        return UIImage(named: "mainIconImage", in: Bundle(for: HomeViewController.self), with: nil)
     }
 }
 

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LeaderboardCell: UICollectionViewCell {
+class LeaderboardCell: BaseCell {
 
     // MARK: - UI Elements
     private var scoreLabel = UILabel()
@@ -31,14 +31,13 @@ class LeaderboardCell: UICollectionViewCell {
             scoreLabel.text = String(result.resultString!)
             categoryLabel.text = result.category
             timeLabel.text = "\(result.seconds)s"
-            decimalProgress = ResultHelper.convertToDecimal(score: result.numberOfCorrectAnswers, numberOfQuestions: result.responses?.count ?? 0)
+            decimalProgress = ResultHelper.convertToDecimal(score: result.numberOfCorrectAnswers)
         }
     }
 
     // MARK: - Initialise
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setUpCell()
         setupLeaderboardLabel()
         setupScoreLabel()
         setupCategoryLabel()
@@ -54,19 +53,7 @@ class LeaderboardCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setUpCell() {
-        contentView.backgroundColor = .cellColour
-        layer.cornerRadius = Constants.cellCornerRadius
-        contentView.layer.cornerRadius = Constants.cellCornerRadius
-        contentView.clipsToBounds = true
-        layer.borderWidth = 0
-        layer.shadowColor = UIColor.gray.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: Constants.shadowOffset)
-        layer.shadowRadius = Constants.shadowRadius
-        layer.shadowOpacity = Constants.shadowOpacity
-        layer.masksToBounds = false
-    }
-
+    // MARK: - Setup
     private func setUpCircularProgressBarView() {
         circularProgressView = CircularProgressView()
         circularProgressView?.alpha = 1.0
@@ -75,7 +62,7 @@ class LeaderboardCell: UICollectionViewCell {
     }
 
     private func setupGenericLabel(_ label: UILabel) {
-        label.textColor = .textColour
+        label.textColor = .textColor
         label.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(label)
     }
@@ -134,9 +121,5 @@ extension LeaderboardCell {
         static let font = UIFont.systemFont(ofSize: 18)
         static let timeFont = UIFont.italicSystemFont(ofSize: 15)
         static let progressFont = UIFont.systemFont(ofSize: 12)
-        static let cellCornerRadius: CGFloat = 5.0
-        static let shadowRadius: CGFloat = 3.0
-        static let shadowOffset: CGFloat = 2.0
-        static let shadowOpacity: Float = 2.0
     }
 }

@@ -1,18 +1,13 @@
 //
-//  ViewController.swift
+//  HomeViewController.swift
 //  Quiz
 //
 //  Created by Megan Wynn on 29/09/2021.
 //
 
-
-// Add to GIT
-// Change to easy medium hard
-// Settings button on main page
-
 import UIKit
 
-class ViewController: UIViewController {
+class HomeViewController: UIViewController {
 
     // MARK: - Private Properties
     private var startButton: QuizMenuButton!
@@ -43,6 +38,10 @@ class ViewController: UIViewController {
         navigationController?.navigationBar.shadowImage = UIImage()
 
         navigationController?.navigationBar.tintColor = .titleColor
+
+        let settingsButton = UIBarButtonItem(title: "Settings", style: .done, target: self, action: #selector(settingsButtonTapped(_:)))
+        settingsButton.tintColor = .titleColor
+        navigationItem.rightBarButtonItem = settingsButton
     }
 
     private func setupLogoImage() {
@@ -89,7 +88,7 @@ class ViewController: UIViewController {
 
     // MARK: Objective C Functions
     @objc func startButtonTapped(_ sender: QuizMenuButton) {
-        let viewController = MainViewController()
+        let viewController = CategoryViewController()
         viewController.quizRoundManager = quizRoundManager
         navigationController?.pushViewController(viewController, animated: true)
     }
@@ -101,10 +100,17 @@ class ViewController: UIViewController {
         leaderboardNavigationController.isModalInPresentation = true
         present(leaderboardNavigationController, animated: true, completion: nil)
     }
+
+    @objc func settingsButtonTapped(_ sender: UIBarButtonItem) {
+        let viewController = SettingsViewController()
+        let settingsNavigationController = UINavigationController(rootViewController: viewController)
+        settingsNavigationController.isModalInPresentation = true
+        present(settingsNavigationController, animated: true, completion: nil)
+    }
 }
 
 // MARK: - Constants
-extension ViewController {
+extension HomeViewController {
     enum Constants {
         static let buttonHeight: CGFloat = 60
         static let bottomPadding: CGFloat = 100

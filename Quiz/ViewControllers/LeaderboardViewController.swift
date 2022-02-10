@@ -10,39 +10,73 @@ import UIKit
 class LeaderboardViewController: UIViewController {
 
     // MARK: - Properties
-    var quizRoundPersistanceService: QuizRoundPersistanceService!
+    var quizRoundManager: QuizRoundResultsManager!
 
     // MARK: - Private Properties
     private var identifier = "Cell"
     private var headerIdentifier = "Header"
+    private let defaults: UserDefaults = .standard
 
     // MARK: - UIElements
     private var collectionView: UICollectionView!
     private var noResultsLabel = UILabel()
+    private var segmentedControl = UISegmentedControl()
+    private var buttonBar = UIView()
 
     private var datasource: UICollectionViewDiffableDataSource<SectionIdentifier, QuizRoundResult>!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        assert(quizRoundPersistanceService != nil)
+        assert(quizRoundManager != nil)
 
         title = "Leaderboard"
-        view.backgroundColor = .backgroundColour
+        view.backgroundColor = .backgroundColor
         let quitButton = UIBarButtonItem(title: "Quit", style: .done, target: self, action: #selector(quitButtonTapped(_:)))
-        quitButton.tintColor = .label
+        quitButton.tintColor = .titleColor
         navigationItem.rightBarButtonItem = quitButton
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.titleColor]
+        setupSegmentedControl()
         setupCollectionView()
         setupDatasource()
 
-        if quizRoundPersistanceService.getAllQuizRoundResults().count == 0 {
-            setupNoResultsLabel()
-        }
+        segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
+
+//        if quizRoundManager.getAllQuizRoundResults().count == 0 {
+//            setupNoResultsLabel()
+//        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        loadItems()
+        loadItems(difficulty: 0)
+        let popularCategories = quizRoundManager.getUsersPopularCategories()
+        let topScoresInCategory = quizRoundManager.getCategoriesWithTopScores()
+    }
+
+    private func setupSegmentedControl() {
+        buttonBar.translatesAutoresizingMaskIntoConstraints = false
+        buttonBar.backgroundColor = UIColor.mainColor
+
+        segmentedControl.insertSegment(withTitle: "Easy", at: 0, animated: false)
+        segmentedControl.insertSegment(withTitle: "Medium", at: 1, animated: false)
+        segmentedControl.insertSegment(withTitle: "Hard", at: 2, animated: false)
+        segmentedControl.frame = CGRect(x: 0, y: 50, width: view.frame.width, height: 50)
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.selectedSegmentTintColor = .clear
+        segmentedControl.backgroundColor = .white
+        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.mainColor2], for: .normal)
+        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.mainColor], for: .selected)
+
+        view.addSubview(segmentedControl)
+        view.addSubview(buttonBar)
+
+        NSLayoutConstraint.activate([
+            buttonBar.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor),
+            buttonBar.heightAnchor.constraint(equalToConstant: 5),
+            buttonBar.leftAnchor.constraint(equalTo: segmentedControl.leftAnchor),
+            buttonBar.widthAnchor.constraint(equalTo: segmentedControl.widthAnchor, multiplier: 1 / CGFloat(segmentedControl.numberOfSegments))
+        ])
     }
 
     private func setupCollectionView() {
@@ -63,14 +97,14 @@ class LeaderboardViewController: UIViewController {
         collectionView.register(LeaderboardCell.self, forCellWithReuseIdentifier: identifier)
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerIdentifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .backgroundColour
+        collectionView.backgroundColor = .backgroundColor
 
         view.addSubview(collectionView)
 
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 10),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -93,43 +127,27 @@ class LeaderboardViewController: UIViewController {
         }
     }
 
-    private func loadItems(animated: Bool = false) {
-        let allResults = quizRoundPersistanceService.getAllQuizRoundResults()
-        guard let yesterdaysDate = Calendar.current.date(byAdding: .day, value: -1, to: Date().stripTime()) else {
-            print("Unable to calculate yesterday's date")
-            return
-        }
-
-        let todaysResults = allResults.filter({ $0.date == Date().stripTime() }).sorted { $0 == $1 ? $0.seconds < $1.seconds : $0 > $1  }
-        let yesterdaysResults = allResults.filter({ $0.date == yesterdaysDate }).sorted { $0 == $1 ? $0.seconds < $1.seconds : $0 > $1  }
-        let earlierResults = allResults.filter({ $0.date < yesterdaysDate }).sorted { $0 == $1 ? $0.seconds < $1.seconds : $0 > $1  }
+    private func loadItems(animated: Bool = false, difficulty: Int) {
+        quizRoundManager.getFilteredResults(difficulty: difficulty)
 
         var snapshot = NSDiffableDataSourceSnapshot<SectionIdentifier, QuizRoundResult>()
         snapshot.appendSections([.today, .yesterday, .earlier])
-        snapshot.appendItems(todaysResults, toSection: .today)
-        snapshot.appendItems(yesterdaysResults, toSection: .yesterday)
-        snapshot.appendItems(earlierResults, toSection: .earlier)
+        snapshot.appendItems(quizRoundManager.todaysResults, toSection: .today)
+        snapshot.appendItems(quizRoundManager.yesterdaysResults, toSection: .yesterday)
+        snapshot.appendItems(quizRoundManager.earlierResults, toSection: .earlier)
         datasource.apply(snapshot, animatingDifferences: animated)
-    }
-
-    private func setupNoResultsLabel() {
-        noResultsLabel.translatesAutoresizingMaskIntoConstraints = false
-        noResultsLabel.text = "Currently no results recorded"
-        noResultsLabel.textAlignment = .center
-        noResultsLabel.font = UIFont.preferredFont(forTextStyle: .caption1).withSize(22)
-        view.addSubview(noResultsLabel)
-
-        NSLayoutConstraint.activate([
-            noResultsLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: Constants.topPadding),
-            noResultsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.sidePadding),
-            noResultsLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.sidePadding),
-            noResultsLabel.heightAnchor.constraint(equalToConstant: 50)
-        ])
     }
 
     // MARK: Objective C Functions
     @objc func quitButtonTapped(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
+    }
+
+    @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
+      UIView.animate(withDuration: 0.3) {
+          self.buttonBar.frame.origin.x = (self.segmentedControl.frame.width / CGFloat(self.segmentedControl.numberOfSegments)) * CGFloat(self.segmentedControl.selectedSegmentIndex)
+          self.loadItems(difficulty: self.segmentedControl.selectedSegmentIndex)
+      }
     }
 }
 

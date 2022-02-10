@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct CategoryTopScore {
+    var category: String
+    var result: Int
+//    var date: Date
+}

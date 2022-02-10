@@ -10,27 +10,24 @@ import UIKit
 class SettingsViewController: UIViewController {
 
     private let difficultyControl = UISegmentedControl()
-    private let numberOfQuestionControl = UISegmentedControl()
-    private let numberOfQuestionsLabel = UILabel()
     private let difficultyLabel = UILabel()
     private let defaults: UserDefaults = .standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Settings"
-        view.backgroundColor = .white
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Update", style: .done, target: self, action: #selector(updateButtonTapped(_:)))
+        view.backgroundColor = .backgroundColor
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.titleColor]
+        let updateButton = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveButtonTapped(_:)))
+        updateButton.tintColor = .titleColor
+        navigationItem.rightBarButtonItem = updateButton
         setupDifficultyLabel()
         setupDifficultyControl()
-        setupNumberOfQuestionsLabel()
-        setupQuestionNumberControl()
     }
 
-    @objc func updateButtonTapped(_ sender: UIBarButtonItem) {
-        defaults.set(difficultyControl.selectedSegmentIndex, forKey: "difficultyNumber")
+    @objc func saveButtonTapped(_ sender: UIBarButtonItem) {
+        defaults.set(difficultyControl.selectedSegmentIndex, forKey: "difficulty")
         defaults.set(difficultyControl.titleForSegment(at: difficultyControl.selectedSegmentIndex)?.lowercased(), forKey: "difficultyTitle")
-        defaults.set(numberOfQuestionControl.selectedSegmentIndex, forKey: "numberOfQuestionsIndex")
-        defaults.set(numberOfQuestionControl.titleForSegment(at: numberOfQuestionControl.selectedSegmentIndex)?.lowercased(), forKey: "numberOfQuestions")
         dismiss(animated: true, completion: nil)
     }
 
@@ -51,35 +48,17 @@ class SettingsViewController: UIViewController {
         difficultyControl.insertSegment(withTitle: "Medium", at: 1, animated: false)
         difficultyControl.insertSegment(withTitle: "Hard", at: 2, animated: false)
         difficultyControl.frame = CGRect(x: (view.frame.width - 300) / 2, y: 130, width: 300, height: 50)
-        difficultyControl.selectedSegmentIndex = defaults.integer(forKey: "difficultyNumber")
+        difficultyControl.selectedSegmentIndex = defaults.integer(forKey: "difficulty")
+        difficultyControl.selectedSegmentTintColor = .mainColor
+        difficultyControl.backgroundColor = .mainColor2
+        difficultyControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
         view.addSubview(difficultyControl)
-    }
-
-    private func setupNumberOfQuestionsLabel() {
-        numberOfQuestionsLabel.text = "Number of questions"
-        setupGenericLabel(label: numberOfQuestionsLabel)
-
-        NSLayoutConstraint.activate([
-            numberOfQuestionsLabel.topAnchor.constraint(equalTo: difficultyControl.bottomAnchor, constant: 20),
-            numberOfQuestionsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: (view.frame.width - 300) / 2),
-            numberOfQuestionsLabel.heightAnchor.constraint(equalToConstant: 40),
-            numberOfQuestionsLabel.widthAnchor.constraint(equalToConstant: 200)
-        ])
-    }
-
-    private func setupQuestionNumberControl() {
-        numberOfQuestionControl.insertSegment(withTitle: "5", at: 0, animated: false)
-        numberOfQuestionControl.insertSegment(withTitle: "10", at: 1, animated: false)
-        numberOfQuestionControl.insertSegment(withTitle: "15", at: 2, animated: false)
-        numberOfQuestionControl.frame = CGRect(x: (view.frame.width - 300) / 2, y: 250, width: 300, height: 50)
-        numberOfQuestionControl.selectedSegmentIndex = defaults.integer(forKey: "numberOfQuestionsIndex")
-        view.addSubview(numberOfQuestionControl)
     }
 
     private func setupGenericLabel(label: UILabel) {
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .textColour
+        label.textColor = .titleColor
         view.addSubview(label)
     }
 }

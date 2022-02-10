@@ -31,6 +31,8 @@ class QuizRoundCoreDataPersistanceService: QuizRoundPersistanceService {
         coreDataResult.startTime = result.startTime
         coreDataResult.endTime = result.endTime
         coreDataResult.category = result.category
+        coreDataResult.percentageCorrect = Int64(result.percentageCorrect ?? 0)
+        coreDataResult.difficulty = Int64(result.difficulty ?? 0)
         saveIfNecessary()
         print("Save result called")
     }
@@ -46,10 +48,12 @@ class QuizRoundCoreDataPersistanceService: QuizRoundPersistanceService {
             } catch {
                 print("An error occurred while saving: \(error)")
             }
+
+            self.fetchAllQuizRoundResults()
         }
     }
 
-    private func fetchAllQuizRoundResults() {
+    public func fetchAllQuizRoundResults() {
         DispatchQueue.global(qos: .userInitiated).async {
 
             let fetchRequest: NSFetchRequest<QuizRoundResultCD>

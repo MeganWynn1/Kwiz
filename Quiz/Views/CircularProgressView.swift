@@ -39,26 +39,8 @@ class CircularProgressView: UIView {
         progressLayer.lineCap = .round
         progressLayer.lineWidth = 10
         progressLayer.strokeEnd = 0
-        progressLayer.strokeColor = UIColor.startButtonColour.cgColor
+        progressLayer.strokeColor = UIColor.mainColor.cgColor
         layer.addSublayer(progressLayer)
-
-//        func addGradient() {
-//            let gradient = CAGradientLayer()
-//            gradient.colors = [UIColor.red.cgColor,UIColor.purple.cgColor,UIColor.systemPink.cgColor,UIColor.blue.cgColor]
-//            gradient.frame = bounds
-//            gradient.mask = progressLayer
-//            layer.addSublayer(gradient)
-//          }
-//
-//        addGradient()
-//
-//        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
-//        gradientLayer.endPoint = CGPoint(x: 0, y: 0.5)
-//        gradientLayer.colors = [UIColor.startButtonColour.cgColor, UIColor.resultButtonColour.cgColor]
-//        gradientLayer.frame = progressLayer.bounds
-//        gradientLayer.frame = CGRect(x: frame.size.width, y: frame.size.height, width: 160, height: 160)
-//        gradientLayer.mask = progressLayer
-//        layer.addSublayer(gradientLayer)
     }
 
     func createStaticView(x: CGFloat, y: CGFloat, strokeEnd: CGFloat) {
@@ -68,7 +50,7 @@ class CircularProgressView: UIView {
         circleLayer.lineCap = .round
         circleLayer.lineWidth = 5
         circleLayer.strokeEnd = strokeEnd
-        circleLayer.strokeColor = UIColor.startButtonColour.cgColor
+        circleLayer.strokeColor = UIColor.mainColor.cgColor
         layer.addSublayer(circleLayer)
     }
 

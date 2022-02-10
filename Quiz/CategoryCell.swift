@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CategoryCell: UICollectionViewCell {
+class CategoryCell: BaseCell {
 
     // MARK: - Properties
     var label = UILabel()
@@ -15,7 +15,6 @@ class CategoryCell: UICollectionViewCell {
     // MARK: - Initialise
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setUpCell()
     }
 
     override func layoutSubviews() {
@@ -28,24 +27,11 @@ class CategoryCell: UICollectionViewCell {
     }
 
     // MARK: - Setup
-    private func setUpCell() {
-        contentView.backgroundColor = .cellColour
-        layer.cornerRadius = Constants.cellCornerRadius
-        contentView.layer.cornerRadius = Constants.cellCornerRadius
-        contentView.clipsToBounds = true
-        layer.borderWidth = 0
-        layer.shadowColor = UIColor.gray.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: Constants.shadowOffset)
-        layer.shadowRadius = Constants.shadowRadius
-        layer.shadowOpacity = Constants.shadowOpacity
-        layer.masksToBounds = false
-    }
-
     private func setupLabel() {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Constants.font
         label.textAlignment = .center
-        label.textColor = .textColour
+        label.textColor = .textColor
         contentView.addSubview(label)
 
         NSLayoutConstraint.activate([
@@ -62,11 +48,7 @@ class CategoryCell: UICollectionViewCell {
 extension CategoryCell {
     enum Constants {
         static let labelPadding: CGFloat = 10
-        static let font = UIFont.systemFont(ofSize: 20)
-        static let cellCornerRadius: CGFloat = 5.0
-        static let shadowRadius: CGFloat = 3.0
-        static let shadowOffset: CGFloat = 2.0
-        static let shadowOpacity: Float = 2.0
+        static let font = UIFont.preferredFont(forTextStyle: .body).withSize(22)
     }
 }
 

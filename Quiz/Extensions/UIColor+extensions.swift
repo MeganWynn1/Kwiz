@@ -9,11 +9,11 @@ import UIKit
 
 extension UIColor {
 
-    static let backgroundColour = UIColor(named: "quiz_bgColor")!
+    static let backgroundColor = UIColor(named: "quiz_bgColor")!
     static let cellColour = UIColor(named: "cellColour")!
-    static let textColour = UIColor(named: "textColour")!
     static let spinnerBackground = UIColor(named: "spinnerBackground")!
-    static let startButtonColour = UIColor(named: "startButtonColour")!
-    static let resultButtonColour = UIColor(named: "resultButtonColour")!
-    static let shadowColour = UIColor(named: "shadowColor")!
+    static let mainColor = UIColor(named: "quiz_mainColor")!
+    static let mainColor2 = UIColor(named: "quiz_mainColor2")!
+    static let textColor = UIColor(named: "textColor")!
+    static let titleColor = UIColor(named: "titleColor")!
 }

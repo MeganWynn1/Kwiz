@@ -7,11 +7,6 @@
 
 import Foundation
 
-protocol QuizRoundPersistanceService {
-    func saveResult(_ result: QuizRoundResult)
-    func getAllQuizRoundResults() -> [QuizRoundResult]
-}
-
 class QuizRoundJSONPersistanceService: QuizRoundPersistanceService {
 
     private let filename = "results.json"

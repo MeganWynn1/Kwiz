@@ -25,7 +25,7 @@ class HeaderView: UICollectionReusableView {
     }
 
     private func setupOvalView() {
-        ovalView.backgroundColor = .startButtonColour
+        ovalView.backgroundColor = .mainColor2
         ovalView.layer.cornerRadius = 10.0
         ovalView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(ovalView)

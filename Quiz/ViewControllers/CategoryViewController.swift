@@ -1,5 +1,5 @@
 //
-//  MainViewController.swift
+//  CategoryViewController.swift
 //  Quiz
 //
 //  Created by Megan Wynn on 29/09/2021.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
+class CategoryViewController: UIViewController {
 
     var quizRoundManager: QuizRoundResultsManager!
     
@@ -32,10 +32,6 @@ class MainViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         
         navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.titleColor]
-
-        let settingsButton = UIBarButtonItem(title: "Settings", style: .done, target: self, action: #selector(settingsButtonTapped(_:)))
-        settingsButton.tintColor = .titleColor
-        navigationItem.rightBarButtonItem = settingsButton
     }
 
     private func setupCollectionView() {
@@ -58,17 +54,10 @@ class MainViewController: UIViewController {
         let quizCategory = QuizCategory(rawValue: indexPath.row)
         return quizCategory
     }
-
-    @objc func settingsButtonTapped(_ sender: UIBarButtonItem) {
-        let viewController = SettingsViewController()
-        let settingsNavigationController = UINavigationController(rootViewController: viewController)
-        settingsNavigationController.isModalInPresentation = true
-        present(settingsNavigationController, animated: true, completion: nil)
-    }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension MainViewController: UICollectionViewDelegateFlowLayout {
+extension CategoryViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let category = category(forIndexPath: indexPath) else {
             print("Unable to find category for index path: \(indexPath)")
@@ -84,7 +73,7 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
 }
 
 // MARK: - UICollectionViewDataSource
-extension MainViewController: UICollectionViewDataSource {
+extension CategoryViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return QuizCategory.allCases.count
     }
