@@ -17,9 +17,10 @@ public enum QuizQuestionServiceError: Error, Equatable {
 class QuizQuestionService {
 
     public func getQuestions(category: String, with completion: @escaping (Result<[QuizQuestion], QuizQuestionServiceError>) -> Void) {
-        let url = URL(string: "https://api.trivia.willfry.co.uk/questions?categories=\(category)&limit=10")!
+        let url = URL(string: "https://api.trivia.willfry.co.uk/questions?categories=\(category)&limit=30")!
         let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
             DispatchQueue.main.async {
+                print(url)
                 if error != nil {
                     completion(.failure(.noInternetConnection))
                 }

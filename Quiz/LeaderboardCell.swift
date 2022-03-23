@@ -17,7 +17,6 @@ class LeaderboardCell: BaseCell {
 
     // MARK: - Private Properties
     private var circularProgressView: CircularProgressView?
-    private var decimalProgress: Float?
 
     // MARK: - Properties
     var cellNumber: Int? {
@@ -28,10 +27,9 @@ class LeaderboardCell: BaseCell {
     var result: QuizRoundResult? {
         didSet {
             guard let result = result else { return }
-            scoreLabel.text = String(result.resultString!)
+            scoreLabel.text = String(result.resultString ?? "")
             categoryLabel.text = result.category
             timeLabel.text = "\(result.seconds)s"
-            decimalProgress = ResultHelper.convertToDecimal(score: result.numberOfCorrectAnswers)
         }
     }
 
@@ -57,7 +55,7 @@ class LeaderboardCell: BaseCell {
     private func setUpCircularProgressBarView() {
         circularProgressView = CircularProgressView()
         circularProgressView?.alpha = 1.0
-        circularProgressView?.createStaticView(x: contentView.frame.size.width - 40, y: contentView.frame.size.height / 2.0, strokeEnd: CGFloat(decimalProgress ?? 0))
+        circularProgressView?.createStaticView(x: contentView.frame.size.width - 40, y: contentView.frame.size.height / 2.0, strokeEnd: CGFloat(0))
         contentView.addSubview(circularProgressView!)
     }
 

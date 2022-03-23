@@ -7,6 +7,17 @@
 
 import UIKit
 
+enum LeaderboardStyle {
+    case today0yesterday0earlier0
+    case today1yesterday0earlier0
+    case today0yesterday1earlier0
+    case today0yesterday0earlier1
+    case today1yesterday1earlier0
+    case today1yesterday0earlier1
+    case today0yesterday1earlier1
+    case today1yesterday1earlier1
+}
+
 class LeaderboardViewController: UIViewController {
 
     // MARK: - Properties
@@ -15,6 +26,7 @@ class LeaderboardViewController: UIViewController {
     // MARK: - Private Properties
     private var identifier = "Cell"
     private var headerIdentifier = "Header"
+    private var noResultsIdentifier = "NoResultsIdentifier"
     private let defaults: UserDefaults = .standard
 
     // MARK: - UIElements
@@ -41,22 +53,16 @@ class LeaderboardViewController: UIViewController {
         setupDatasource()
 
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
-
-//        if quizRoundManager.getAllQuizRoundResults().count == 0 {
-//            setupNoResultsLabel()
-//        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         loadItems(difficulty: 0)
-        let popularCategories = quizRoundManager.getUsersPopularCategories()
-        let topScoresInCategory = quizRoundManager.getCategoriesWithTopScores()
     }
 
     private func setupSegmentedControl() {
         buttonBar.translatesAutoresizingMaskIntoConstraints = false
-        buttonBar.backgroundColor = UIColor.mainColor
+        buttonBar.backgroundColor = UIColor.primaryColor
 
         segmentedControl.insertSegment(withTitle: "Easy", at: 0, animated: false)
         segmentedControl.insertSegment(withTitle: "Medium", at: 1, animated: false)
@@ -65,8 +71,8 @@ class LeaderboardViewController: UIViewController {
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.selectedSegmentTintColor = .clear
         segmentedControl.backgroundColor = .white
-        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.mainColor2], for: .normal)
-        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.mainColor], for: .selected)
+        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.secondaryColor], for: .normal)
+        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.primaryColor], for: .selected)
 
         view.addSubview(segmentedControl)
         view.addSubview(buttonBar)
@@ -95,6 +101,7 @@ class LeaderboardViewController: UIViewController {
 
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(LeaderboardCell.self, forCellWithReuseIdentifier: identifier)
+        collectionView.register(EmptyLeaderboardCell.self, forCellWithReuseIdentifier: noResultsIdentifier)
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerIdentifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .backgroundColor
@@ -111,11 +118,18 @@ class LeaderboardViewController: UIViewController {
 
     private func setupDatasource() {
         datasource = UICollectionViewDiffableDataSource.init(collectionView: collectionView, cellProvider: { collectionView, indexPath, item in
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.identifier, for: indexPath) as! LeaderboardCell
-            cell.cellNumber = indexPath.row
-            cell.result = item
+            var resultCell: UICollectionViewCell
+            if item.isNoResult {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.noResultsIdentifier, for: indexPath) as! EmptyLeaderboardCell
+                resultCell = cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.identifier, for: indexPath) as! LeaderboardCell
+                cell.cellNumber = indexPath.row
+                cell.result = item
+                resultCell = cell
+            }
 
-            return cell
+            return resultCell
         })
 
         datasource?.supplementaryViewProvider = { (collectionView, kind, indexPath) in
@@ -127,14 +141,63 @@ class LeaderboardViewController: UIViewController {
         }
     }
 
+    private func leaderboardStyle(for todaysResults: [QuizRoundResult], yesterdaysResults: [QuizRoundResult], earlierResults: [QuizRoundResult]) -> LeaderboardStyle {
+
+        if todaysResults.count == 0 {
+            if yesterdaysResults.count == 0 {
+                if earlierResults.count == 0 {
+                    return .today0yesterday0earlier0
+                } else {
+                    return .today0yesterday0earlier1
+                }
+            } else {
+                if earlierResults.count == 0 {
+                    return .today0yesterday1earlier0
+                } else {
+                    return .today0yesterday1earlier1
+                }
+            }
+        } else {
+            if yesterdaysResults.count == 0 {
+                if earlierResults.count == 0 {
+                    return .today1yesterday0earlier0
+                } else {
+                    return .today1yesterday0earlier1
+                }
+            } else {
+                if earlierResults.count == 0 {
+                    return .today1yesterday1earlier0
+                } else {
+                    return .today1yesterday1earlier1
+                }
+            }
+        }
+    }
+
     private func loadItems(animated: Bool = false, difficulty: Int) {
         quizRoundManager.getFilteredResults(difficulty: difficulty)
-
         var snapshot = NSDiffableDataSourceSnapshot<SectionIdentifier, QuizRoundResult>()
-        snapshot.appendSections([.today, .yesterday, .earlier])
-        snapshot.appendItems(quizRoundManager.todaysResults, toSection: .today)
-        snapshot.appendItems(quizRoundManager.yesterdaysResults, toSection: .yesterday)
-        snapshot.appendItems(quizRoundManager.earlierResults, toSection: .earlier)
+
+        let todaysResults = quizRoundManager.todaysResults.count == 0 ? [QuizRoundResult.noResult()] : quizRoundManager.todaysResults
+        let yesterdaysResults = quizRoundManager.yesterdaysResults.count == 0 ? [QuizRoundResult.noResult()] : quizRoundManager.yesterdaysResults
+        let earlierResults = quizRoundManager.earlierResults.count == 0 ? [QuizRoundResult.noResult()] : quizRoundManager.earlierResults
+
+        let style = leaderboardStyle(for: quizRoundManager.todaysResults, yesterdaysResults: quizRoundManager.yesterdaysResults, earlierResults: quizRoundManager.earlierResults)
+        switch style {
+        case .today0yesterday0earlier0, .today1yesterday0earlier0:
+            snapshot.appendSections([.today])
+            snapshot.appendItems(todaysResults, toSection: .today)
+        case .today1yesterday1earlier0, .today0yesterday1earlier0:
+            snapshot.appendSections([.today, .yesterday])
+            snapshot.appendItems(todaysResults, toSection: .today)
+            snapshot.appendItems(yesterdaysResults, toSection: .yesterday)
+        case .today0yesterday0earlier1, .today1yesterday0earlier1, .today0yesterday1earlier1, .today1yesterday1earlier1:
+            snapshot.appendSections([.today, .yesterday, .earlier])
+            snapshot.appendItems(todaysResults, toSection: .today)
+            snapshot.appendItems(yesterdaysResults, toSection: .yesterday)
+            snapshot.appendItems(earlierResults, toSection: .earlier)
+        }
+
         datasource.apply(snapshot, animatingDifferences: animated)
     }
 

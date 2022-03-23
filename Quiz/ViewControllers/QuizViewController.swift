@@ -26,6 +26,7 @@ class QuizViewController: UIViewController {
     private var identifier = "QuestionsCell"
     private var quizQuestionResponses: [QuizQuestionResponse] = []
     private var quizRoundStartDate: Date!
+    private var cancellable: AnyCancellable?
 
     // MARK: - UI Elements
     private var questionLabel = UILabel()
@@ -131,13 +132,41 @@ class QuizViewController: UIViewController {
                 self.quizRoundStartDate = Date()
                 switch result {
                 case .success(let questions):
-                    self.questions = questions.shuffled()
+                    self.questions = self.filteredQuestions(from: questions, numberOfQuestions: 10) ?? []
                     self.presentNextQuestion(animated: false)
                 case .failure(_):
                     print("error")
                 }
             }
         }
+    }
+
+    private func filteredQuestions(from questions: [QuizQuestion], shuffled: Bool = true, numberOfQuestions: Int) -> [QuizQuestion]? {
+
+        guard questions.count >= numberOfQuestions else { return nil }
+        var quizQuestions: [QuizQuestion] = []
+        var allAnswers: [String] = []
+
+        var candidateQuestions = questions
+        if shuffled { candidateQuestions.shuffle() }
+
+        cancellable = candidateQuestions.publisher
+            .removeDuplicates { prev, current in
+                prev.id == current.id
+            }
+            .sink {
+                allAnswers.append($0.correctAnswer)
+                allAnswers.append(contentsOf: $0.incorrectAnswers)
+                if allAnswers.allSatisfy({ $0.count <= 60 }) {
+                    quizQuestions.append($0)
+                }
+            }
+
+        let result = Array(quizQuestions.prefix(numberOfQuestions))
+        guard result.count >= numberOfQuestions else { return nil }
+
+        // What to do if we don't have enough questions?? - Return from JSON file?
+        return result
     }
 
     private func presentNextQuestion(animated: Bool) {
@@ -174,6 +203,8 @@ class QuizViewController: UIViewController {
             answerButtonCollection.append(button)
             answerStack.addArrangedSubview(button)
             button.setTitle(answersArray[num], for: .normal)
+            button.titleLabel?.lineBreakMode = .byWordWrapping
+            button.titleLabel?.textAlignment = .center
             button.addTarget(self, action: #selector(answerButtonTapped(_:)), for: .touchUpInside)
             button.isEnabled = true
 
@@ -215,7 +246,7 @@ class QuizViewController: UIViewController {
     private func setupStackView() {
         answerStack.translatesAutoresizingMaskIntoConstraints = false
         answerStack.axis = .vertical
-        answerStack.spacing = Constants.sidePadding
+        answerStack.spacing = 10
     }
 
     private func updateAnswerButton(button: UIButton, isCorrect: Bool) {
@@ -265,7 +296,6 @@ class QuizViewController: UIViewController {
         quizRoundResult.category = category.title
         quizRoundResult.startTime = quizRoundStartDate
         quizRoundResult.endTime = quizQuestionResponses.last?.dateCompleted ?? Date()
-        quizRoundResult.responses = quizQuestionResponses
         quizRoundResult.percentageCorrect = ResultHelper.convertToPercentage(score: score)
         quizRoundResult.difficulty = defaults.integer(forKey: "difficulty")
         quizRoundManager.saveResult(quizRoundResult)
@@ -349,9 +379,9 @@ extension QuizViewController: UICollectionViewDataSource {
 // MARK: - Constants
 extension QuizViewController {
     enum Constants {
-        static let sidePadding: CGFloat = 20
+        static let sidePadding: CGFloat = 40
         static let topPadding: CGFloat = 100
-        static let answerButtonHeight: CGFloat = 50
+        static let answerButtonHeight: CGFloat = 60
 
         static let cornerRadius: CGFloat = 5.0
         static let shadowRadius: CGFloat = 3.0

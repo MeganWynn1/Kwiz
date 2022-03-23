@@ -39,17 +39,19 @@ struct QuizRoundResult: Codable {
     var category: String?
     var startTime: Date?
     var endTime: Date?
-    var responses: [QuizQuestionResponse]?
     var percentageCorrect: Int?
     var difficulty: Int?
 
-    var numberOfCorrectAnswers: Int {
-        guard let responses = responses else { return 0 }
-        return responses.filter({$0.response == .correct}).count
+    static func noResult() -> QuizRoundResult {
+        return QuizRoundResult(id: UUID(), category: nil)
+    }
+
+    var isNoResult: Bool {
+        return category == nil
     }
 
     var seconds: Int {
-        return Int(endTime!.timeIntervalSinceReferenceDate) - Int(startTime!.timeIntervalSinceReferenceDate)
+        return Int(endTime?.timeIntervalSinceReferenceDate ?? 0) - Int(startTime?.timeIntervalSinceReferenceDate ?? 0)
     }
 
     var date: Date {
@@ -64,8 +66,9 @@ extension QuizRoundResult: Hashable {
 }
 
 extension QuizRoundResult: Comparable {
+
     static func < (lhs: QuizRoundResult, rhs: QuizRoundResult) -> Bool {
-        return lhs.numberOfCorrectAnswers < rhs.numberOfCorrectAnswers
+        return lhs.percentageCorrect ?? 0 < rhs.percentageCorrect ?? 0
     }
 
     static func == (lhs: QuizRoundResult, rhs: QuizRoundResult) -> Bool {

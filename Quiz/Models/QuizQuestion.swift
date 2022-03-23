@@ -8,6 +8,7 @@
 import Foundation
 
 struct QuizQuestion: Codable, Equatable {
+    var id: String
     var question: String
     var correctAnswer: String
     var incorrectAnswers: [String]

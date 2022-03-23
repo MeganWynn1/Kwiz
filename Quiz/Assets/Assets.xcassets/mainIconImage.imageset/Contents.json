@@ -1,16 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "quizAppIcon (1).png",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
+      "filename" : "mainIconImage.png",
       "idiom" : "universal"
     }
   ],

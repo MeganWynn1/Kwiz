@@ -46,6 +46,9 @@ class QuizRoundJSONPersistanceService: QuizRoundPersistanceService {
         }
     }
 
+    func clearAllData() { }
+
+
     public func getAllQuizRoundResults() -> [QuizRoundResult] {
         return allQuizRoundResults
     }

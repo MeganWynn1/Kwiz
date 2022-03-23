@@ -7,6 +7,11 @@
 
 import UIKit
 
+// Scroll view on settings page
+// Check constraints on multiple devices
+// Design changes then look at dark mode
+// Change app name
+
 class HomeViewController: UIViewController {
 
     // MARK: - Private Properties
@@ -23,6 +28,8 @@ class HomeViewController: UIViewController {
 
         let quizRoundPersistanceService = QuizRoundCoreDataPersistanceService()
         quizRoundManager = QuizRoundResultsManager(persistanceService: quizRoundPersistanceService)
+        quizRoundPersistanceService.saveYesterdayMockData()
+//        quizRoundPersistanceService.saveEarlierMockData()
 
         setUpNavigationView()
         setupStartButton()
@@ -39,7 +46,10 @@ class HomeViewController: UIViewController {
 
         navigationController?.navigationBar.tintColor = .titleColor
 
-        let settingsButton = UIBarButtonItem(title: "Settings", style: .done, target: self, action: #selector(settingsButtonTapped(_:)))
+        let settingsButton = UIBarButtonItem(title: NSString(string: "\u{2699}\u{0000FE0E}") as String, style: .plain, target: self, action: #selector(settingsButtonTapped(_:)))
+        let font = UIFont.systemFont(ofSize: 44)
+        let attributes = [NSAttributedString.Key.font : font]
+        settingsButton.setTitleTextAttributes(attributes, for: .normal)
         settingsButton.tintColor = .titleColor
         navigationItem.rightBarButtonItem = settingsButton
     }
@@ -52,19 +62,19 @@ class HomeViewController: UIViewController {
         NSLayoutConstraint.activate([
             logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
-            logoImageView.heightAnchor.constraint(equalToConstant: 250),
-            logoImageView.widthAnchor.constraint(equalToConstant: 250)
+            logoImageView.heightAnchor.constraint(equalToConstant: view.frame.width/1.2),
+            logoImageView.widthAnchor.constraint(equalToConstant: view.frame.width/1.2)
         ])
     }
 
     private func setupStartButton() {
-        startButton = QuizMenuButton(title: "START", backgroundColor: .mainColor)
+        startButton = QuizMenuButton(title: "CATEGORIES", backgroundColor: .primaryColor)
         startButton.translatesAutoresizingMaskIntoConstraints = false
         startButton.addTarget(self, action: #selector(startButtonTapped(_:)), for: .touchUpInside)
     }
 
     private func setupLeaderboardButton() {
-        leaderboardButton = QuizMenuButton(title: "LEADERBOARD", backgroundColor: .mainColor2)
+        leaderboardButton = QuizMenuButton(title: "LEADERBOARD", backgroundColor: .secondaryColor)
         leaderboardButton.translatesAutoresizingMaskIntoConstraints = false
         leaderboardButton.addTarget(self, action: #selector(leaderboardButtonTapped(_:)), for: .touchUpInside)
     }

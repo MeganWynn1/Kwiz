@@ -55,7 +55,7 @@ class CompletedQuestionsCell: UICollectionViewCell {
         label.font = Constants.font
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.textColor = .mainColor2
+        label.textColor = .secondaryColor
         contentView.addSubview(label)
 
         NSLayoutConstraint.activate([

@@ -20,7 +20,7 @@ class BaseCell: UICollectionViewCell {
     }
 
     private func setUpCell() {
-        contentView.backgroundColor = .mainColor
+        contentView.backgroundColor = .primaryColor
         layer.cornerRadius = Constants.cellCornerRadius
         contentView.layer.cornerRadius = Constants.cellCornerRadius
         contentView.clipsToBounds = true

@@ -34,7 +34,46 @@ class QuizRoundCoreDataPersistanceService: QuizRoundPersistanceService {
         coreDataResult.percentageCorrect = Int64(result.percentageCorrect ?? 0)
         coreDataResult.difficulty = Int64(result.difficulty ?? 0)
         saveIfNecessary()
-        print("Save result called")
+
+//        print(result.id)
+//        print(result.resultString)
+//        print(result.startTime)
+//        print(result.endTime)
+//        print(result.category)
+//        print(Int64(result.percentageCorrect ?? 0))
+//        print(Int64(result.difficulty ?? 0))
+
+//        DE46D5DF-D5D8-4DFF-BBF9-FA72E04E4FE5
+//        Optional("30%")
+//        Optional(2022-03-22 11:15:17 +0000)
+//        Optional(2022-03-22 11:15:35 +0000)
+//        Optional("History")
+//        30
+//        2
+    }
+
+    func saveYesterdayMockData() {
+        let coreDataResult = QuizRoundResultCD(context: persistanceContainer.viewContext)
+        coreDataResult.id = UUID()
+        coreDataResult.resultString = "30%"
+        coreDataResult.startTime = Date(timeIntervalSinceReferenceDate: 669673417)
+        coreDataResult.endTime = Date(timeIntervalSinceReferenceDate: 669673477)
+        coreDataResult.category = "History"
+        coreDataResult.percentageCorrect = 30
+        coreDataResult.difficulty = 1
+        saveIfNecessary()
+    }
+
+    func saveEarlierMockData() {
+        let coreDataResult = QuizRoundResultCD(context: persistanceContainer.viewContext)
+        coreDataResult.id = UUID()
+        coreDataResult.resultString = "30%"
+        coreDataResult.startTime = Date(timeIntervalSinceReferenceDate: 669381621)
+        coreDataResult.endTime = Date(timeIntervalSinceReferenceDate: 669381681)
+        coreDataResult.category = "History"
+        coreDataResult.percentageCorrect = 30
+        coreDataResult.difficulty = 2
+        saveIfNecessary()
     }
 
     func getAllQuizRoundResults() -> [QuizRoundResult] {
@@ -73,4 +112,49 @@ class QuizRoundCoreDataPersistanceService: QuizRoundPersistanceService {
             }
         }
     }
+
+    public func clearAllData() {
+        let storeContainer = persistanceContainer.persistentStoreCoordinator
+
+        do {
+            // Delete each existing persistent store
+            for store in storeContainer.persistentStores {
+                try storeContainer.destroyPersistentStore( at: store.url!, ofType: store.type, options: nil)
+            }
+        } catch {
+            print(error)
+        }
+
+        persistanceContainer = NSPersistentContainer(name: "QuizCoreData")
+        persistanceContainer.loadPersistentStores { (store, error) in
+            if let error = error {
+                print("Unresolved error \(error)")
+            }
+        }
+    }
+//
+//    public func presentEmailFeedback() {
+//
+//        let subject = "App Feedback - <App Name>"
+//        let replyAddress = "blah@blah.com"
+//
+//        if MFMailComposeViewController.canSendMail() {
+//            let mail = MFMailComposeViewController()
+//            mail.mailComposeDelegate = self
+//            mail.setToRecipients([replyAddress])
+//            mail.setSubject(subject)
+//            present(mail, animated: true)
+//        } else {
+//            let alertController = UIAlertController(title: "Email Error", message: "Email not configured for this device", preferredStyle: .alert)
+//            alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+//            present(alertController, animated: true, completion: nil)
+//        }
+//    }
 }
+
+////MARK: - MFMailComposeViewControllerDelegate
+//extension QuizRoundCoreDataPersistanceService: MFMailComposeViewControllerDelegate {
+//    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+//        controller.dismiss(animated: true)
+//    }
+//}

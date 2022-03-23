@@ -23,6 +23,10 @@ class QuizRoundResultsManager {
         return persistanceService.getAllQuizRoundResults()
     }
 
+    func clearAllData() {
+        return persistanceService.clearAllData()
+    }
+
     func getUsersPopularCategories() -> [PopularCategory] {
         let allQuizRoundResults = getAllQuizRoundResults()
         var userPopularCategoriesArray: [PopularCategory] = []
@@ -78,7 +82,7 @@ class QuizRoundResultsManager {
             return
         }
 
-        todaysResults = filteredResults.filter({ $0.date == Date().stripTime() }).sorted { $0 == $1 ? $0.seconds < $1.seconds : $0 > $1  }
+        todaysResults = filteredResults.filter({ $0.date == Date().stripTime() }).sorted { $0 == $1 ? $0.seconds < $1.seconds : $0 > $1 }
         yesterdaysResults = filteredResults.filter({ $0.date == yesterdaysDate }).sorted { $0 == $1 ? $0.seconds < $1.seconds : $0 > $1  }
         earlierResults = filteredResults.filter({ $0.date < yesterdaysDate }).sorted { $0 == $1 ? $0.seconds < $1.seconds : $0 > $1  }
     }

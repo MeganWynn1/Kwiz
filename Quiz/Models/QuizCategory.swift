@@ -8,7 +8,7 @@
 import Foundation
 
 enum QuizCategory: Int, CaseIterable, Codable {
-    case movies
+    case filmAndTv
     case music
     case foodAndDrink
     case generalKnowledge
@@ -18,8 +18,8 @@ enum QuizCategory: Int, CaseIterable, Codable {
 
     var urlString: String {
         switch self {
-        case .movies:
-            return "movies"
+        case .filmAndTv:
+            return "film%20&%20tv"
         case .music:
             return "music"
         case .foodAndDrink:
@@ -37,8 +37,8 @@ enum QuizCategory: Int, CaseIterable, Codable {
 
     var title: String {
         switch self {
-        case .movies:
-            return "Movies"
+        case .filmAndTv:
+            return "Film and Tv"
         case .music:
             return "Music"
         case .foodAndDrink:

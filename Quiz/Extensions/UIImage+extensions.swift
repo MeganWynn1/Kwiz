@@ -20,6 +20,18 @@ public extension UIImage {
     static var appIcon: UIImage! {
         return UIImage(named: "mainIconImage", in: Bundle(for: HomeViewController.self), with: nil)
     }
+
+    static var star: UIImage! {
+        return UIImage(named: "star", in: Bundle(for: HomeViewController.self), with: nil)
+    }
+
+    static var email: UIImage! {
+        return UIImage(named: "email", in: Bundle(for: HomeViewController.self), with: nil)
+    }
+
+    static var bin: UIImage! {
+        return UIImage(named: "bin", in: Bundle(for: HomeViewController.self), with: nil)
+    }
 }
 
 

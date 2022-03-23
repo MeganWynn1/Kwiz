@@ -21,7 +21,7 @@ class CircularProgressView: UIView {
     }
 
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
 
     func createCircularPath() {
@@ -39,7 +39,7 @@ class CircularProgressView: UIView {
         progressLayer.lineCap = .round
         progressLayer.lineWidth = 10
         progressLayer.strokeEnd = 0
-        progressLayer.strokeColor = UIColor.mainColor.cgColor
+        progressLayer.strokeColor = UIColor.primaryColor.cgColor
         layer.addSublayer(progressLayer)
     }
 
@@ -50,7 +50,7 @@ class CircularProgressView: UIView {
         circleLayer.lineCap = .round
         circleLayer.lineWidth = 5
         circleLayer.strokeEnd = strokeEnd
-        circleLayer.strokeColor = UIColor.mainColor.cgColor
+        circleLayer.strokeColor = UIColor.primaryColor.cgColor
         layer.addSublayer(circleLayer)
     }
 
