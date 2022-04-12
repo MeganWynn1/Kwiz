@@ -7,17 +7,6 @@
 
 import UIKit
 
-enum LeaderboardStyle {
-    case today0yesterday0earlier0
-    case today1yesterday0earlier0
-    case today0yesterday1earlier0
-    case today0yesterday0earlier1
-    case today1yesterday1earlier0
-    case today1yesterday0earlier1
-    case today0yesterday1earlier1
-    case today1yesterday1earlier1
-}
-
 class LeaderboardViewController: UIViewController {
 
     // MARK: - Properties
@@ -141,39 +130,7 @@ class LeaderboardViewController: UIViewController {
         }
     }
 
-    private func leaderboardStyle(for todaysResults: [QuizRoundResult], yesterdaysResults: [QuizRoundResult], earlierResults: [QuizRoundResult]) -> LeaderboardStyle {
-
-        if todaysResults.count == 0 {
-            if yesterdaysResults.count == 0 {
-                if earlierResults.count == 0 {
-                    return .today0yesterday0earlier0
-                } else {
-                    return .today0yesterday0earlier1
-                }
-            } else {
-                if earlierResults.count == 0 {
-                    return .today0yesterday1earlier0
-                } else {
-                    return .today0yesterday1earlier1
-                }
-            }
-        } else {
-            if yesterdaysResults.count == 0 {
-                if earlierResults.count == 0 {
-                    return .today1yesterday0earlier0
-                } else {
-                    return .today1yesterday0earlier1
-                }
-            } else {
-                if earlierResults.count == 0 {
-                    return .today1yesterday1earlier0
-                } else {
-                    return .today1yesterday1earlier1
-                }
-            }
-        }
-    }
-
+    // Look at bitwise or bit-shifting!
     private func loadItems(animated: Bool = false, difficulty: Int) {
         quizRoundManager.getFilteredResults(difficulty: difficulty)
         var snapshot = NSDiffableDataSourceSnapshot<SectionIdentifier, QuizRoundResult>()
@@ -182,7 +139,8 @@ class LeaderboardViewController: UIViewController {
         let yesterdaysResults = quizRoundManager.yesterdaysResults.count == 0 ? [QuizRoundResult.noResult()] : quizRoundManager.yesterdaysResults
         let earlierResults = quizRoundManager.earlierResults.count == 0 ? [QuizRoundResult.noResult()] : quizRoundManager.earlierResults
 
-        let style = leaderboardStyle(for: quizRoundManager.todaysResults, yesterdaysResults: quizRoundManager.yesterdaysResults, earlierResults: quizRoundManager.earlierResults)
+        let leaderboardUtilities = LeaderboardUtilities()
+        let style = leaderboardUtilities.leaderboardStyle(for: quizRoundManager.todaysResults, yesterdaysResults: quizRoundManager.yesterdaysResults, earlierResults: quizRoundManager.earlierResults)
         switch style {
         case .today0yesterday0earlier0, .today1yesterday0earlier0:
             snapshot.appendSections([.today])

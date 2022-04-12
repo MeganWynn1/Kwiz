@@ -10,9 +10,8 @@ import UIKit
 class CircularProgressView: UIView {
 
     // MARK: - Properties
-    private var circleLayer = CAShapeLayer()
-    private var progressLayer = CAShapeLayer()
-    private var gradientLayer = CAGradientLayer()
+    private var circleLayer: CAShapeLayer!
+    private var progressLayer: CAShapeLayer!
     private var startPoint = CGFloat(-Double.pi / 2)
     private var endPoint = CGFloat(3 * Double.pi / 2)
 
@@ -25,7 +24,9 @@ class CircularProgressView: UIView {
     }
 
     func createCircularPath() {
-        let circularPath = UIBezierPath(arcCenter: CGPoint(x: frame.size.width / 2.0, y: frame.size.height / 2.0), radius: 80, startAngle: startPoint, endAngle: endPoint, clockwise: true)
+        circleLayer = CAShapeLayer()
+        circleLayer.frame = CGRect(origin: .zero, size: CGSize(width: 180.0, height: 180.0))
+        let circularPath = UIBezierPath(arcCenter: CGPoint(x: circleLayer.frame.size.width / 2.0, y: circleLayer.frame.size.height / 2.0), radius: 80, startAngle: startPoint, endAngle: endPoint, clockwise: true)
         circleLayer.path = circularPath.cgPath
         circleLayer.fillColor = UIColor.clear.cgColor
         circleLayer.lineCap = .round
@@ -34,6 +35,8 @@ class CircularProgressView: UIView {
         circleLayer.strokeColor = UIColor.white.cgColor
         layer.addSublayer(circleLayer)
 
+        progressLayer = CAShapeLayer()
+        progressLayer.frame = CGRect(origin: .zero, size: CGSize(width: 180.0, height: 180.0))
         progressLayer.path = circularPath.cgPath
         progressLayer.fillColor = UIColor.clear.cgColor
         progressLayer.lineCap = .round
@@ -41,17 +44,6 @@ class CircularProgressView: UIView {
         progressLayer.strokeEnd = 0
         progressLayer.strokeColor = UIColor.primaryColor.cgColor
         layer.addSublayer(progressLayer)
-    }
-
-    func createStaticView(x: CGFloat, y: CGFloat, strokeEnd: CGFloat) {
-        let circularPath = UIBezierPath(arcCenter: CGPoint(x: x, y: y), radius: 25, startAngle: startPoint, endAngle: endPoint, clockwise: true)
-        circleLayer.path = circularPath.cgPath
-        circleLayer.fillColor = UIColor.clear.cgColor
-        circleLayer.lineCap = .round
-        circleLayer.lineWidth = 5
-        circleLayer.strokeEnd = strokeEnd
-        circleLayer.strokeColor = UIColor.primaryColor.cgColor
-        layer.addSublayer(circleLayer)
     }
 
     func progressAnimation(toValue: Float) {
@@ -62,4 +54,11 @@ class CircularProgressView: UIView {
         circularProgressAnimation.isRemovedOnCompletion = false
         progressLayer.add(circularProgressAnimation, forKey: "progressAnim")
     }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        circleLayer.position = CGPoint(x: bounds.width / 2.0, y: bounds.height / 2.0)
+        progressLayer.position = CGPoint(x: bounds.width / 2.0, y: bounds.height / 2.0)
+    }
+
 }

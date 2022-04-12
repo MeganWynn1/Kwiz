@@ -44,8 +44,6 @@ class QuizRoundResultsManager {
                 userPopularCategoriesArray.append(newPopularCategory)
             }
         }
-
-        print("Users popular categories:", userPopularCategoriesArray)
         return userPopularCategoriesArray
     }
 
@@ -67,7 +65,6 @@ class QuizRoundResultsManager {
                 categoryTopScores.append(newTopScore)
             }
         }
-        print("Top scores of played categories:", categoryTopScores)
         return categoryTopScores
     }
 

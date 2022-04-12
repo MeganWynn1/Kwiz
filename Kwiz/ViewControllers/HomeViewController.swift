@@ -7,14 +7,15 @@
 
 import UIKit
 
-// Scroll view on settings page
-// Check constraints on multiple devices
-// Design changes then look at dark mode
+// Quiz viewController constraints on multiple devices
+// Look at dark mode
+// Add pop up before clearing the leaderboard data
+// Add more unit tests
 
 class HomeViewController: UIViewController {
 
     // MARK: - Private Properties
-    private var startButton: QuizMenuButton!
+    private var categoriesButton: QuizMenuButton!
     private var leaderboardButton: QuizMenuButton!
     private var logoImageView = UIImageView()
 
@@ -31,8 +32,6 @@ class HomeViewController: UIViewController {
 //        quizRoundPersistanceService.saveEarlierMockData()
 
         setUpNavigationView()
-        setupStartButton()
-        setupLeaderboardButton()
         addButtons()
         setupLogoImage()
     }
@@ -53,23 +52,10 @@ class HomeViewController: UIViewController {
         navigationItem.rightBarButtonItem = settingsButton
     }
 
-    private func setupLogoImage() {
-        logoImageView.translatesAutoresizingMaskIntoConstraints = false
-        logoImageView.image = .appIcon
-        view.addSubview(logoImageView)
-
-        NSLayoutConstraint.activate([
-            logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
-            logoImageView.heightAnchor.constraint(equalToConstant: view.frame.width/1.2),
-            logoImageView.widthAnchor.constraint(equalToConstant: view.frame.width/1.2)
-        ])
-    }
-
-    private func setupStartButton() {
-        startButton = QuizMenuButton(title: "CATEGORIES", backgroundColor: .primaryColor)
-        startButton.translatesAutoresizingMaskIntoConstraints = false
-        startButton.addTarget(self, action: #selector(startButtonTapped(_:)), for: .touchUpInside)
+    private func setupCategoriesButton() {
+        categoriesButton = QuizMenuButton(title: "CATEGORIES", backgroundColor: .primaryColor)
+        categoriesButton.translatesAutoresizingMaskIntoConstraints = false
+        categoriesButton.addTarget(self, action: #selector(startButtonTapped(_:)), for: .touchUpInside)
     }
 
     private func setupLeaderboardButton() {
@@ -79,19 +65,35 @@ class HomeViewController: UIViewController {
     }
 
     private func addButtons() {
-        view.addSubview(startButton)
+        setupCategoriesButton()
+        setupLeaderboardButton()
+        view.addSubview(categoriesButton)
         view.addSubview(leaderboardButton)
 
         NSLayoutConstraint.activate([
             leaderboardButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            leaderboardButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.bottomPadding),
+            leaderboardButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.bottomPadding),
             leaderboardButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight),
             leaderboardButton.widthAnchor.constraint(equalToConstant: view.frame.size.width/1.5),
 
-            startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            startButton.bottomAnchor.constraint(equalTo: leaderboardButton.topAnchor, constant: -Constants.buttonSpacing),
-            startButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight),
-            startButton.widthAnchor.constraint(equalToConstant: view.frame.size.width/1.5)
+            categoriesButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            categoriesButton.bottomAnchor.constraint(equalTo: leaderboardButton.topAnchor, constant: -Constants.buttonSpacing),
+            categoriesButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight),
+            categoriesButton.widthAnchor.constraint(equalToConstant: view.frame.size.width/1.5)
+        ])
+    }
+
+    private func setupLogoImage() {
+        let logoImageWidth = view.frame.width/1.6
+        logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        logoImageView.image = .appIcon
+        view.addSubview(logoImageView)
+
+        NSLayoutConstraint.activate([
+            logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            logoImageView.bottomAnchor.constraint(equalTo: categoriesButton.topAnchor, constant: -self.view.frame.height/7),
+            logoImageView.heightAnchor.constraint(equalToConstant: logoImageWidth),
+            logoImageView.widthAnchor.constraint(equalToConstant: logoImageWidth)
         ])
     }
 
@@ -122,7 +124,7 @@ class HomeViewController: UIViewController {
 extension HomeViewController {
     enum Constants {
         static let buttonHeight: CGFloat = 60
-        static let bottomPadding: CGFloat = 100
+        static let bottomPadding: CGFloat = 50
         static let buttonSpacing: CGFloat = 20.0
     }
 }

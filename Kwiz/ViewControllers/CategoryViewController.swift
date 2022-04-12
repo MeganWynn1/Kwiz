@@ -38,7 +38,7 @@ class CategoryViewController: UIViewController {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         layout.itemSize = CGSize(width: view.frame.size.width-60, height: 70)
-        collectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
+        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
 
         guard let collectionView = collectionView else { return }
         collectionView.register(CategoryCell.self, forCellWithReuseIdentifier: identifier)
@@ -46,8 +46,15 @@ class CategoryViewController: UIViewController {
 
         collectionView.dataSource = self
         collectionView.delegate = self
-
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
+
+        NSLayoutConstraint.activate([
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 
     private func category(forIndexPath indexPath: IndexPath) -> QuizCategory? {

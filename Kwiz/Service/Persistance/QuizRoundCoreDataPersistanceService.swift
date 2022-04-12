@@ -40,8 +40,8 @@ class QuizRoundCoreDataPersistanceService: QuizRoundPersistanceService {
         let coreDataResult = QuizRoundResultCD(context: persistanceContainer.viewContext)
         coreDataResult.id = UUID()
         coreDataResult.resultString = "30%"
-        coreDataResult.startTime = Date(timeIntervalSinceReferenceDate: 669673417)
-        coreDataResult.endTime = Date(timeIntervalSinceReferenceDate: 669673477)
+        coreDataResult.startTime = Date(timeIntervalSinceReferenceDate: 669724498)
+        coreDataResult.endTime = Date(timeIntervalSinceReferenceDate: 669724558)
         coreDataResult.category = "History"
         coreDataResult.percentageCorrect = 30
         coreDataResult.difficulty = 1

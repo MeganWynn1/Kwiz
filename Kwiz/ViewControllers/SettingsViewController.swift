@@ -16,7 +16,7 @@ class SettingsViewController: UIViewController {
     private var quizRoundManager: QuizRoundResultsManager!
 
     // MARK: - UI Elements
-    private var difficultyStackView = UIStackView()
+    private var scrollView = UIScrollView()
     private var difficultyLabel = UILabel()
     private var difficultyControl = UISegmentedControl()
     private var additionalSettingsLabel = UILabel()
@@ -55,29 +55,54 @@ class SettingsViewController: UIViewController {
         clearDataButtonView.addGestureRecognizer(tapClear)
         emailButtonView.addGestureRecognizer(tapEmail)
 
-        setupDifficultyStack()
+        setupVersionsLabel()
+        setupScrollView()
         setupDifficultyControl()
+        setupDifficultyLabel()
         setupAdditionalSettingsStack()
         setupCreditsStack()
-        setupVersionsLabel()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+       scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height + 300)
     }
 
     // MARK: - Setup
-    private func setupDifficultyStack() {
-        difficultyStackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(difficultyStackView)
-
-        difficultyLabel.text = "Difficulty"
-        setupGenericLabel(label: difficultyLabel)
-        difficultyStackView.addArrangedSubview(difficultyLabel)
+    private func setupVersionsLabel() {
+        versionLabel.text = "v1.0.0"
+        versionLabel.textColor = .lightGray
+        versionLabel.textAlignment = .center
+        versionLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(versionLabel)
 
         NSLayoutConstraint.activate([
-            difficultyStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            difficultyStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: view.frame.width / 8),
-            difficultyStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -(view.frame.width / 8)),
+            versionLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
+            versionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            versionLabel.heightAnchor.constraint(equalToConstant: 50),
+            versionLabel.widthAnchor.constraint(equalToConstant: 200)
+        ])
+    }
 
-            difficultyLabel.topAnchor.constraint(equalTo: difficultyStackView.topAnchor),
-            difficultyLabel.leadingAnchor.constraint(equalTo: difficultyStackView.leadingAnchor),
+    private func setupScrollView() {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: versionLabel.topAnchor, constant: -10)
+        ])
+    }
+
+    private func setupDifficultyLabel() {
+        difficultyLabel.text = "Difficulty"
+        setupGenericLabel(label: difficultyLabel)
+        scrollView.addSubview(difficultyLabel)
+
+        NSLayoutConstraint.activate([
+            difficultyLabel.bottomAnchor.constraint(equalTo: difficultyControl.topAnchor, constant: -10),
+            difficultyLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: (view.frame.width - 300) / 2),
             difficultyLabel.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
@@ -86,19 +111,19 @@ class SettingsViewController: UIViewController {
         difficultyControl.insertSegment(withTitle: "Easy", at: 0, animated: false)
         difficultyControl.insertSegment(withTitle: "Medium", at: 1, animated: false)
         difficultyControl.insertSegment(withTitle: "Hard", at: 2, animated: false)
-        difficultyControl.frame = CGRect(x: (view.frame.width - 300) / 2, y: 130, width: 300, height: 50)
+        difficultyControl.frame = CGRect(x: (view.frame.width - 300) / 2, y: 100, width: 300, height: 50)
         difficultyControl.selectedSegmentIndex = defaults.integer(forKey: "difficulty")
         difficultyControl.selectedSegmentTintColor = .primaryColor
         difficultyControl.backgroundColor = .secondaryColor
         difficultyControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
-        view.addSubview(difficultyControl)
+        scrollView.addSubview(difficultyControl)
     }
 
     private func setupAdditionalSettingsStack() {
         additionalSettingsStackView.translatesAutoresizingMaskIntoConstraints = false
         additionalSettingsStackView.axis = .vertical
         additionalSettingsStackView.spacing = 10
-        view.addSubview(additionalSettingsStackView)
+        scrollView.addSubview(additionalSettingsStackView)
 
         separator = UIView()
         separator.translatesAutoresizingMaskIntoConstraints = false
@@ -138,7 +163,7 @@ class SettingsViewController: UIViewController {
         creditsStackView.translatesAutoresizingMaskIntoConstraints = false
         creditsStackView.axis = .vertical
         creditsStackView.spacing = 10
-        view.addSubview(creditsStackView)
+        scrollView.addSubview(creditsStackView)
 
         separator = UIView()
         separator.translatesAutoresizingMaskIntoConstraints = false
@@ -161,21 +186,6 @@ class SettingsViewController: UIViewController {
 
             separator.heightAnchor.constraint(equalToConstant: 1),
             creditsLabel.heightAnchor.constraint(equalToConstant: 40)
-        ])
-    }
-
-    private func setupVersionsLabel() {
-        versionLabel.text = "v1.0.0"
-        versionLabel.textColor = .lightGray
-        versionLabel.textAlignment = .center
-        versionLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(versionLabel)
-
-        NSLayoutConstraint.activate([
-            versionLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
-            versionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            versionLabel.heightAnchor.constraint(equalToConstant: 50),
-            versionLabel.widthAnchor.constraint(equalToConstant: 200)
         ])
     }
 
