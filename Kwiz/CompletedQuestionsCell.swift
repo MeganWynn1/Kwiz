@@ -46,7 +46,8 @@ class CompletedQuestionsCell: UICollectionViewCell {
             resultImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Constants.labelPadding),
             resultImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constants.labelPadding),
             resultImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.labelPadding),
-            resultImage.widthAnchor.constraint(equalToConstant: 50)
+            resultImage.widthAnchor.constraint(equalToConstant: 50),
+            resultImage.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
 

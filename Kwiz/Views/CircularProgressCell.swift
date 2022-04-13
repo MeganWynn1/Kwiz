@@ -28,7 +28,6 @@ class CircularProgressCell: UICollectionViewCell {
 
     // MARK: - Setup
     private func setUpCell() {
-        backgroundColor = .orange
         contentView.clipsToBounds = true
         layer.masksToBounds = false
     }
@@ -45,8 +44,6 @@ class CircularProgressCell: UICollectionViewCell {
             circularProgressView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8.0),
             circularProgressView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
         ])
-
-        circularProgressView.setContentCompressionResistancePriority(.required, for: .vertical)
 
         self.circularProgressView = circularProgressView
     }
