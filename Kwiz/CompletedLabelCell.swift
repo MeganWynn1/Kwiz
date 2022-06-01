@@ -38,7 +38,7 @@ class CompletedLabelCell: UICollectionViewCell {
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.textColor = .secondaryColor
+        label.textColor = .titleColor
         contentView.addSubview(label)
 
         NSLayoutConstraint.activate([

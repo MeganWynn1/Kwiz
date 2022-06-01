@@ -20,9 +20,6 @@ class QuizViewController: UIViewController {
     private var currentQuestion: QuizQuestion?
     private var questions: [QuizQuestion] = []
     private var score: Int = 0
-    private var percentage: Int?
-    private var currentCount: Int?
-    private var updateTimer: Timer?
     private var identifier = "QuestionsCell"
     private var progressIdentifier = "ProgressCell"
     private var completedIdentifier = "CompletedLabelCell"
@@ -30,11 +27,10 @@ class QuizViewController: UIViewController {
     private var quizRoundStartDate: Date!
     private var cancellable: AnyCancellable?
     private var datasource: UICollectionViewDiffableDataSource<Section, QuizQuestionResponse>!
-    private let numberOfQuestions = 1
+    private let numberOfQuestions = 10
 
     // MARK: - UI Elements
     private var questionLabel = UILabel()
-    private var percentageLabel = UILabel()
     private var answerStack = UIStackView()
     private var answerButtonCollection = [AnswerButton]()
     private var completedLabel = UILabel()
@@ -75,16 +71,17 @@ class QuizViewController: UIViewController {
         datasource = UICollectionViewDiffableDataSource.init(collectionView: completedCollectionView, cellProvider: { collectionView, indexPath, item in
             if indexPath.row == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.completedIdentifier, for: indexPath) as! CompletedLabelCell
-                cell.label.text = "Completed"
-                cell.label.font = UIFont.preferredFont(forTextStyle: .body).withSize(22)
+                cell.label.text = "Completed!"
+                cell.label.font = UIFont.preferredFont(forTextStyle: .body).withSize(28)
                 return cell
             } else if indexPath.row == 1 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.progressIdentifier, for: indexPath) as! CircularProgressCell
+                cell.score = score
                 return cell
             } else if indexPath.row == 2 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.completedIdentifier, for: indexPath) as! CompletedLabelCell
-                cell.label.text = "You scored \(score) out of 10 in this \(category) quiz"
-                cell.label.font = UIFont.preferredFont(forTextStyle: .body).withSize(16)
+                cell.label.text = "You scored \(score) out of \(self.numberOfQuestions) in this \(category) quiz"
+                cell.label.font = UIFont.preferredFont(forTextStyle: .body).withSize(18)
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.identifier, for: indexPath) as! CompletedQuestionsCell
@@ -285,9 +282,6 @@ class QuizViewController: UIViewController {
     }
 
     private func quizRoundEnded() {
-        let timeInterval: TimeInterval
-        timeInterval = score == 0 ? 0.1 : ResultHelper.createTimeInterval(score: score)
-
         var quizRoundResult = QuizRoundResult()
         quizRoundResult.resultString = ResultHelper.convertToPercentageString(score: score)
         quizRoundResult.category = category.title
@@ -306,27 +300,11 @@ class QuizViewController: UIViewController {
         setupCollectionView()
         setupDatasource(score: score, category: category.title)
         loadItems()
-        DispatchQueue.main.async {
-            self.percentage = ResultHelper.convertToPercentage(score: self.score)
-            self.currentCount = 0
-            self.updateTimer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(self.updateLabel), userInfo: nil, repeats: true)
-        }
     }
 
     // MARK: Objective C Functions
     @objc func quitButtonTapped(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
-    }
-
-    @objc func updateLabel() {
-        self.percentageLabel.text = "\(currentCount!)%"
-        currentCount! += 1
-        if currentCount! > percentage! {
-            self.updateTimer?.invalidate()
-            self.updateTimer = nil
-            self.percentage = nil
-            self.currentCount = nil
-        }
     }
 
     @objc func answerButtonTapped(_ sender: UIButton) {

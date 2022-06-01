@@ -31,7 +31,7 @@ class CompletedQuestionsCell: UICollectionViewCell {
 
     // MARK: - Setup
     private func setUpCell() {
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .completedQuestionBackground
         layer.cornerRadius = Constants.cellCornerRadius
         contentView.layer.cornerRadius = Constants.cellCornerRadius
         contentView.clipsToBounds = true

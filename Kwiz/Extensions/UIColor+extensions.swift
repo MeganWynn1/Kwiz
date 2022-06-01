@@ -17,4 +17,5 @@ extension UIColor {
     static let textColor = UIColor(named: "textColor")!
     static let titleColor = UIColor(named: "titleColor")!
     static let settingsBackgroundColor = UIColor(named: "settingsBackgroundColor")!
+    static let completedQuestionBackground = UIColor(named: "completedQuestionBackground")!
 }
