@@ -173,7 +173,7 @@ class SettingsViewController: UIViewController {
         setupGenericLabel(label: creditsLabel)
         creditsStackView.addArrangedSubview(creditsLabel)
 
-        creditsText.text = "Kwiz was developed by Megan Wynn, an iOS developer based in the UK. \nI would like to thank willfry.co.uk for the kind permission in allowing me to use their quiz API. Please go and check it out - https://willfry.co.uk"
+        creditsText.text = "Kwiz was developed by Megan Wynn, an iOS developer based in the UK. \nI would like to thank willfry.co.uk for the kind permission in allowing me to use their quiz API. Please go and check it out - https://the-trivia-api.com/"
         creditsText.numberOfLines = 0
         creditsText.textColor = .titleColor
         creditsText.font = UIFont.systemFont(ofSize: 16)
@@ -195,6 +195,10 @@ class SettingsViewController: UIViewController {
         label.textColor = .titleColor
     }
 
+    private func deleteHandler(alert: UIAlertAction!) {
+        quizRoundManager.clearAllData()
+    }
+
     // MARK: Objective C Functions
     @objc func saveButtonTapped(_ sender: UIBarButtonItem) {
         defaults.set(difficultyControl.selectedSegmentIndex, forKey: "difficulty")
@@ -203,7 +207,10 @@ class SettingsViewController: UIViewController {
     }
 
     @objc func handleClearLeaderboard(_ sender: UITapGestureRecognizer? = nil) {
-        quizRoundManager.clearAllData()
+        let alertController = UIAlertController(title: "Are you sure you want to delete all data?", message: "You cannot undo this action", preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: deleteHandler))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alertController, animated: true, completion: nil)
     }
 
     @objc func handleRateApp(_ sender: UITapGestureRecognizer? = nil) {

@@ -101,10 +101,10 @@ class QuizRoundCoreDataPersistanceService: QuizRoundPersistanceService {
         let storeContainer = persistanceContainer.persistentStoreCoordinator
 
         do {
-            // Delete each existing persistent store
             for store in storeContainer.persistentStores {
                 try storeContainer.destroyPersistentStore( at: store.url!, ofType: store.type, options: nil)
             }
+            fetchAllQuizRoundResults()
         } catch {
             print(error)
         }
@@ -116,29 +116,4 @@ class QuizRoundCoreDataPersistanceService: QuizRoundPersistanceService {
             }
         }
     }
-//
-//    public func presentEmailFeedback() {
-//
-//        let subject = "App Feedback - <App Name>"
-//        let replyAddress = "blah@blah.com"
-//
-//        if MFMailComposeViewController.canSendMail() {
-//            let mail = MFMailComposeViewController()
-//            mail.mailComposeDelegate = self
-//            mail.setToRecipients([replyAddress])
-//            mail.setSubject(subject)
-//            present(mail, animated: true)
-//        } else {
-//            let alertController = UIAlertController(title: "Email Error", message: "Email not configured for this device", preferredStyle: .alert)
-//            alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-//            present(alertController, animated: true, completion: nil)
-//        }
-//    }
 }
-
-////MARK: - MFMailComposeViewControllerDelegate
-//extension QuizRoundCoreDataPersistanceService: MFMailComposeViewControllerDelegate {
-//    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
-//        controller.dismiss(animated: true)
-//    }
-//}

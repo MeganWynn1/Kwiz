@@ -16,17 +16,21 @@ class CompletedQuestionsCell: UICollectionViewCell {
     // MARK: - Initialise
     override init(frame: CGRect) {
         super.init(frame: frame)
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        setupImage()
-        setupLabel()
-        setUpCell()
+        commonInit()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private func commonInit() {
+        setupImage()
+        setupLabel()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setUpCell()
     }
 
     // MARK: - Setup

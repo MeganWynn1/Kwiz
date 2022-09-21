@@ -83,12 +83,4 @@ class QuizRoundResultsManager {
         yesterdaysResults = filteredResults.filter({ $0.date == yesterdaysDate }).sorted { $0 == $1 ? $0.seconds < $1.seconds : $0 > $1  }
         earlierResults = filteredResults.filter({ $0.date < yesterdaysDate }).sorted { $0 == $1 ? $0.seconds < $1.seconds : $0 > $1  }
     }
-
-    func getPerfectScoreSplit() -> PerfectScoreSplit? {
-        return nil
-    }
-
-    func getPerfectScoreSplitForCategory() -> [PerfectScoreSplit] {
-        return []
-    }
 }

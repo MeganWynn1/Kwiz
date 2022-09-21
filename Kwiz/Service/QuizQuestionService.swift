@@ -17,7 +17,7 @@ public enum QuizQuestionServiceError: Error, Equatable {
 class QuizQuestionService {
 
     public func getQuestions(category: String, with completion: @escaping (Result<[QuizQuestion], QuizQuestionServiceError>) -> Void) {
-        let url = URL(string: "https://api.trivia.willfry.co.uk/questions?categories=\(category)&limit=30")!
+        let url = URL(string: "https://the-trivia-api.com/api/questions?categories=\(category)&limit=30")!
         let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
             DispatchQueue.main.async {
                 print(url)
@@ -37,7 +37,7 @@ class QuizQuestionService {
                     return completion(.success(data))
                 }
                 catch {
-                    print("Error: \(error.localizedDescription)")
+                    print("Error: \(error)")
                 }
             }
         }

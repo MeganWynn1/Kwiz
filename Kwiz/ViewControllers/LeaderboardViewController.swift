@@ -108,6 +108,7 @@ class LeaderboardViewController: UIViewController {
     private func setupDatasource() {
         datasource = UICollectionViewDiffableDataSource.init(collectionView: collectionView, cellProvider: { collectionView, indexPath, item in
             var resultCell: UICollectionViewCell
+
             if item.isNoResult {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.noResultsIdentifier, for: indexPath) as! EmptyLeaderboardCell
                 resultCell = cell
