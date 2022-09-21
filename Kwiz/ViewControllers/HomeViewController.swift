@@ -34,6 +34,8 @@ class HomeViewController: UIViewController {
         setUpNavigationView()
         addButtons()
         setupLogoImage()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(reInitialiseQuizRoundManager(_:)), name: .didClearAllData, object: nil)
     }
 
     // MARK: - Setup
@@ -95,6 +97,12 @@ class HomeViewController: UIViewController {
             logoImageView.heightAnchor.constraint(equalToConstant: logoImageWidth),
             logoImageView.widthAnchor.constraint(equalToConstant: logoImageWidth)
         ])
+    }
+    
+    // MARK: Notification Listener
+    @objc func reInitialiseQuizRoundManager(_ notification: Notification) {
+        let quizRoundPersistanceService = QuizRoundCoreDataPersistanceService()
+        quizRoundManager = QuizRoundResultsManager(persistanceService: quizRoundPersistanceService)
     }
 
     // MARK: Objective C Functions

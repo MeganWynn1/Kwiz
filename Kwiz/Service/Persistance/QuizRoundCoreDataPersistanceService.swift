@@ -104,7 +104,6 @@ class QuizRoundCoreDataPersistanceService: QuizRoundPersistanceService {
             for store in storeContainer.persistentStores {
                 try storeContainer.destroyPersistentStore( at: store.url!, ofType: store.type, options: nil)
             }
-            fetchAllQuizRoundResults()
         } catch {
             print(error)
         }
@@ -115,5 +114,7 @@ class QuizRoundCoreDataPersistanceService: QuizRoundPersistanceService {
                 print("Unresolved error \(error)")
             }
         }
+
+        NotificationCenter.default.post(name: .didClearAllData, object: nil)
     }
 }
