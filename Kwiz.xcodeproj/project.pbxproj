@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7B1E5DE728DB56F50090D7F3 /* Notification+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1E5DE628DB56F50090D7F3 /* Notification+extensions.swift */; };
 		9306245927F73C6B00B7AF2C /* CircularProgressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9306245827F73C6B00B7AF2C /* CircularProgressCell.swift */; };
 		9306245B27F749AB00B7AF2C /* CompletedLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9306245A27F749AB00B7AF2C /* CompletedLabelCell.swift */; };
 		933E0A2727353C9E00486C71 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933E0A2627353C9E00486C71 /* CircularProgressView.swift */; };
@@ -73,6 +74,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7B1E5DE628DB56F50090D7F3 /* Notification+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+extensions.swift"; sourceTree = "<group>"; };
 		9306245827F73C6B00B7AF2C /* CircularProgressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CircularProgressCell.swift; path = Views/CircularProgressCell.swift; sourceTree = "<group>"; };
 		9306245A27F749AB00B7AF2C /* CompletedLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedLabelCell.swift; sourceTree = "<group>"; };
 		933E0A2627353C9E00486C71 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
@@ -307,6 +309,7 @@
 			children = (
 				9357F73B271F0E1C009C691F /* UIImage+extensions.swift */,
 				939614702704A91C000E343C /* UIColor+extensions.swift */,
+				7B1E5DE628DB56F50090D7F3 /* Notification+extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -513,6 +516,7 @@
 				933E0A2D273EC4E900486C71 /* CompletedQuestionsCell.swift in Sources */,
 				935CFA2B27294A7800A3EBD8 /* LeaderboardCell.swift in Sources */,
 				935CFA2D272AB48400A3EBD8 /* QuizMenuButton.swift in Sources */,
+				7B1E5DE728DB56F50090D7F3 /* Notification+extensions.swift in Sources */,
 				935CFA2527280DAE00A3EBD8 /* Difficulty.swift in Sources */,
 				9357F73E2721953D009C691F /* SettingsViewController.swift in Sources */,
 				93B6C64327996D6500DB65DF /* QuizRoundPersistanceService.swift in Sources */,
