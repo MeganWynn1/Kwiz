@@ -12,6 +12,7 @@ public enum QuizQuestionServiceError: Error, Equatable {
     case missingData
     case noInternetConnection
     case invalidResponseError
+    case unknown
 }
 
 class QuizQuestionService {
@@ -27,6 +28,7 @@ class QuizQuestionService {
                 guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
                     return completion(.failure(.invalidResponseError))
                 }
+                
                 guard let data = data else {
                     return completion(.failure(.missingData))
                 }
@@ -37,7 +39,7 @@ class QuizQuestionService {
                     return completion(.success(data))
                 }
                 catch {
-                    print("Error: \(error)")
+                    return completion(.failure(.unknown))
                 }
             }
         }
