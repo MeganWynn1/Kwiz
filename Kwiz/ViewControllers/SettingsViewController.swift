@@ -223,6 +223,7 @@ class SettingsViewController: UIViewController {
 
     private func presentEmailFeedback() {
         let subject = "App Feedback - Kwiz"
+        #warning("Check email .. maybe create new address kwiz-support@gmail.com")
         let replyAddress = "meg1207@hotmail.co.uk"
 
         if MFMailComposeViewController.canSendMail() {
