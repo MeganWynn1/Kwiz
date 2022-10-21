@@ -173,10 +173,19 @@ class SettingsViewController: UIViewController {
         setupGenericLabel(label: creditsLabel)
         creditsStackView.addArrangedSubview(creditsLabel)
 
-        creditsText.text = "Kwiz was developed by Megan Wynn, an iOS developer based in the UK. \nI would like to thank willfry.co.uk for the kind permission in allowing me to use their quiz API. Please go and check it out - https://the-trivia-api.com/"
+        let quote = "Kwiz was developed by Megan Wynn, an iOS developer based in the UK. \nI would like to thank the-trivia-api.com for the kind permission in allowing me to use their quiz API. \nPlease go and check it out - \nhttps://the-trivia-api.com/"
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .left
+        paragraphStyle.lineSpacing = 5.0
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 16),
+            .foregroundColor: UIColor.titleColor,
+            .paragraphStyle: paragraphStyle
+        ]
+
+        creditsText.attributedText = NSAttributedString(string: quote, attributes: attributes)
         creditsText.numberOfLines = 0
-        creditsText.textColor = .titleColor
-        creditsText.font = UIFont.systemFont(ofSize: 16)
         creditsStackView.addArrangedSubview(creditsText)
 
         NSLayoutConstraint.activate([
@@ -223,8 +232,7 @@ class SettingsViewController: UIViewController {
 
     private func presentEmailFeedback() {
         let subject = "App Feedback - Kwiz"
-        #warning("Check email .. maybe create new address kwiz-support@gmail.com")
-        let replyAddress = "meg1207@hotmail.co.uk"
+        let replyAddress = "kwiz.contact@gmail.com"
 
         if MFMailComposeViewController.canSendMail() {
             let mail = MFMailComposeViewController()

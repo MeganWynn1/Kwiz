@@ -142,20 +142,16 @@ class QuizViewController: UIViewController {
     }
     
     private func handleGetQuestionsError(error: QuizQuestionServiceError) {
-#warning("Present Alert Message")
-        
         var alertController: UIAlertController
-        
         switch error {
         case .noInternetConnection:
-            // present alert to user to check internet connection and try again
-            break
+            alertController = UIAlertController(title: "No Internet Connection", message: "Please check your internet connect and try again", preferredStyle: .alert)
         case .missingData, .invalidResponseError, .unknown:
-            // present alert to user to say there has been a problem with our questions server and try again later
+            alertController = UIAlertController(title: "There has been a problem", message: "There has been a problem with our questions server, please try again later", preferredStyle: .alert)
             break
         }
-        
-       // present(alertController)
+        alertController.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+        present(alertController, animated: true, completion: nil)
     }
     
     private func filteredQuestions(from questions: [QuizQuestion], shuffled: Bool = true, numberOfQuestions: Int) -> [QuizQuestion]? {
