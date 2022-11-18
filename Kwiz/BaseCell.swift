@@ -31,6 +31,6 @@ class BaseCell: UICollectionViewCell {
 // MARK: - Constants
 extension BaseCell {
     enum Constants {
-        static let cellCornerRadius: CGFloat = 5.0
+        static let cellCornerRadius: CGFloat = 10.0
     }
 }

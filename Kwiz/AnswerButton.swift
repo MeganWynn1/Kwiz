@@ -24,6 +24,6 @@ class AnswerButton: UIButton {
 
 extension AnswerButton {
     enum Constants {
-        static let cornerRadius: CGFloat = 5.0
+        static let cornerRadius: CGFloat = 10.0
     }
 }
