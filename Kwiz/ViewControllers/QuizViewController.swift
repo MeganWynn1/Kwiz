@@ -25,26 +25,28 @@ class QuizViewController: UIViewController {
     private var quizRoundStartDate: Date!
     private var cancellable: AnyCancellable?
     private var datasource: UICollectionViewDiffableDataSource<Section, QuizQuestionResponse>!
-    private let numberOfQuestions = 1
+    private let numberOfQuestions = 10
 
     // MARK: - UI Elements
     private var questionLabel = UILabel()
     private var answerStack = UIStackView()
     private var answerButtonCollection = [AnswerButton]()
-    private var completedLabel = UILabel()
-    private var descriptionLabel = UILabel()
     private var spinner: UIActivityIndicatorView!
     private var completedCollectionView: UICollectionView!
     private var congratsLabel = UILabel()
     private var percentageLabel = UILabel()
     private var circularProgressView = CircularProgressView()
 
+    // MARK: - Timer elements
+    private var maxCount: Int = 0
+    private var currentCount: Int = 0
+    private var updateTimer: Timer?
+
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         assert(quizRoundManager != nil)
         configure()
-        completedLabel.alpha = 0.0
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -239,6 +241,15 @@ class QuizViewController: UIViewController {
         ])
     }
 
+    @objc func updateLabel() {
+        percentageLabel.text = "\(currentCount)%"
+            currentCount += 1
+            if currentCount > maxCount {
+                self.updateTimer?.invalidate()
+                self.updateTimer = nil
+            }
+        }
+
     private func setUpProgressView(percentage: Float) {
         circularProgressView.createCircularPath()
         circularProgressView.progressAnimation(toValue: percentage)
@@ -249,8 +260,15 @@ class QuizViewController: UIViewController {
         percentageLabel.textAlignment = .center
         percentageLabel.textColor = .titleColor
         percentageLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(28)
-        percentageLabel.text = "\(score*10)%"
+        percentageLabel.text = "\(currentCount)%"
         view.addSubview(percentageLabel)
+
+        DispatchQueue.main.async {
+            guard self.score*10 != 0 else { return }
+            let time = Double(2)/Double(self.score*10)
+            self.maxCount = self.score*10
+            self.updateTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(self.updateLabel), userInfo: nil, repeats: true)
+        }
 
         congratsLabel.numberOfLines = 0
         congratsLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -278,8 +296,9 @@ class QuizViewController: UIViewController {
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: heightDimension)
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-        group.contentInsets = NSDirectionalEdgeInsets(top: 8.0, leading: 30.0, bottom: 8.0, trailing: 30.0)
+        group.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 30.0, bottom: 20, trailing: 30.0)
         let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 15
 
         let layout = UICollectionViewCompositionalLayout(section: section)
 
@@ -293,7 +312,7 @@ class QuizViewController: UIViewController {
         NSLayoutConstraint.activate([
             completedCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             completedCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            completedCollectionView.topAnchor.constraint(equalTo: congratsLabel.bottomAnchor, constant: 50),
+            completedCollectionView.topAnchor.constraint(equalTo: congratsLabel.bottomAnchor, constant: Constants.topPadding),
             completedCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
