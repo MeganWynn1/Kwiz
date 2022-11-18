@@ -21,10 +21,6 @@ struct QuizQuestionResponse: Codable {
     var quizQuestion: QuizQuestion
     var response: Response
     var dateCompleted: Date
-
-    static func fakeResponse() -> QuizQuestionResponse {
-        return QuizQuestionResponse(quizQuestion: QuizQuestion(id: "", question: "", correctAnswer: "", incorrectAnswers: []), response: .correct, dateCompleted: Date.distantFuture)
-    }
 }
 
 extension QuizQuestionResponse: Hashable {

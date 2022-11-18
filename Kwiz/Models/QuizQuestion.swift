@@ -29,3 +29,9 @@ struct QuizQuestion: Codable, Equatable {
         return answersArray.shuffled()
     }
 }
+
+extension QuizQuestion: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}

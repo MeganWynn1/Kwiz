@@ -21,13 +21,11 @@ class QuizViewController: UIViewController {
     private var questions: [QuizQuestion] = []
     private var score: Int = 0
     private var identifier = "QuestionsCell"
-    private var progressIdentifier = "ProgressCell"
-    private var completedIdentifier = "CompletedLabelCell"
     private var quizQuestionResponses: [QuizQuestionResponse] = []
     private var quizRoundStartDate: Date!
     private var cancellable: AnyCancellable?
     private var datasource: UICollectionViewDiffableDataSource<Section, QuizQuestionResponse>!
-    private let numberOfQuestions = 10
+    private let numberOfQuestions = 1
 
     // MARK: - UI Elements
     private var questionLabel = UILabel()
@@ -37,6 +35,9 @@ class QuizViewController: UIViewController {
     private var descriptionLabel = UILabel()
     private var spinner: UIActivityIndicatorView!
     private var completedCollectionView: UICollectionView!
+    private var congratsLabel = UILabel()
+    private var percentageLabel = UILabel()
+    private var circularProgressView = CircularProgressView()
 
     // MARK: - View Lifecycle
     override func viewDidLoad() {
@@ -69,32 +70,14 @@ class QuizViewController: UIViewController {
 
     private func setupDatasource(score: Int, category: String) {
         datasource = UICollectionViewDiffableDataSource.init(collectionView: completedCollectionView, cellProvider: { collectionView, indexPath, item in
-            if indexPath.row == 0 {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.completedIdentifier, for: indexPath) as! CompletedLabelCell
-                cell.label.text = "Completed!"
-                cell.label.font = UIFont.preferredFont(forTextStyle: .body).withSize(28)
-                return cell
-            } else if indexPath.row == 1 {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.progressIdentifier, for: indexPath) as! CircularProgressCell
-                cell.score = score
-                return cell
-            } else if indexPath.row == 2 {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.completedIdentifier, for: indexPath) as! CompletedLabelCell
-                cell.label.text = "You scored \(score) out of \(self.numberOfQuestions) in this \(category) quiz"
-                cell.label.font = UIFont.preferredFont(forTextStyle: .body).withSize(18)
-                return cell
-            } else {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.identifier, for: indexPath) as! CompletedQuestionsCell
-                cell.label.text = item.quizQuestion.question
-                cell.resultImage.image = item.response == .correct ? UIImage.correct : UIImage.incorrect
-                return cell
-            }
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.identifier, for: indexPath) as! CompletedQuestionsCell
+            cell.label.text = item.quizQuestion.question
+            cell.resultImage.image = item.response == .correct ? UIImage.correct : UIImage.incorrect
+            return cell
         })
     }
 
     private func loadItems(animated: Bool = false) {
-        var quizQuestionResponses = [QuizQuestionResponse.fakeResponse(), QuizQuestionResponse.fakeResponse(), QuizQuestionResponse.fakeResponse()]
-        quizQuestionResponses.append(contentsOf: self.quizQuestionResponses)
         var snapshot = NSDiffableDataSourceSnapshot<Section, QuizQuestionResponse>()
         snapshot.appendSections([.main])
         snapshot.appendItems(quizQuestionResponses, toSection: .main)
@@ -155,25 +138,17 @@ class QuizViewController: UIViewController {
     }
     
     private func filteredQuestions(from questions: [QuizQuestion], shuffled: Bool = true, numberOfQuestions: Int) -> [QuizQuestion]? {
-
         guard questions.count >= numberOfQuestions else { return nil }
         var quizQuestions: [QuizQuestion] = []
-        var allAnswers: [String] = []
 
-        var candidateQuestions = questions
-        if shuffled { candidateQuestions.shuffle() }
+        if shuffled { self.questions.shuffle() }
 
-        cancellable = candidateQuestions.publisher
-            .removeDuplicates { prev, current in
-                prev.id == current.id
+        let filteredQuestions = Array(Set(questions))
+        for a in filteredQuestions {
+            if a.correctAnswer.count <= 70 || a.incorrectAnswers.allSatisfy({ $0.count <= 60 }) {
+                quizQuestions.append(a)
             }
-            .sink {
-                allAnswers.append($0.correctAnswer)
-                allAnswers.append(contentsOf: $0.incorrectAnswers)
-                if allAnswers.allSatisfy({ $0.count <= 60 }) {
-                    quizQuestions.append($0)
-                }
-            }
+        }
 
         let result = Array(quizQuestions.prefix(numberOfQuestions))
         guard result.count >= numberOfQuestions else { return nil }
@@ -224,7 +199,6 @@ class QuizViewController: UIViewController {
                 button.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.09)
             ])
         }
-        print(currentQuestion!.correctAnswer)
     }
 
     private func setupQuestionLabel() {
@@ -265,8 +239,40 @@ class QuizViewController: UIViewController {
         ])
     }
 
-    private func setupCollectionView() {
+    private func setUpProgressView(percentage: Float) {
+        circularProgressView.createCircularPath()
+        circularProgressView.progressAnimation(toValue: percentage)
+        circularProgressView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(circularProgressView)
 
+        percentageLabel.translatesAutoresizingMaskIntoConstraints = false
+        percentageLabel.textAlignment = .center
+        percentageLabel.textColor = .titleColor
+        percentageLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(28)
+        percentageLabel.text = "\(score*10)%"
+        view.addSubview(percentageLabel)
+
+        congratsLabel.numberOfLines = 0
+        congratsLabel.translatesAutoresizingMaskIntoConstraints = false
+        congratsLabel.textAlignment = .center
+        congratsLabel.textColor = .titleColor
+        congratsLabel.text = "Congratulations! \nYou scored \(score) out of \(self.numberOfQuestions) in this \(category.title.lowercased()) quiz"
+        view.addSubview(congratsLabel)
+
+        NSLayoutConstraint.activate([
+            circularProgressView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.circleRadius + Constants.topPadding),
+            circularProgressView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+
+            percentageLabel.topAnchor.constraint(equalTo: circularProgressView.topAnchor, constant: -Constants.halfLabelHeight),
+            percentageLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+
+            congratsLabel.topAnchor.constraint(equalTo: circularProgressView.bottomAnchor, constant: Constants.circleRadius + Constants.topPadding),
+            congratsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.halfLabelHeight),
+            congratsLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.halfLabelHeight)
+        ])
+    }
+
+    private func setupCollectionView() {
         let heightDimension = NSCollectionLayoutDimension.estimated(180)
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: heightDimension)
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -279,8 +285,6 @@ class QuizViewController: UIViewController {
 
         completedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         completedCollectionView.register(CompletedQuestionsCell.self, forCellWithReuseIdentifier: identifier)
-        completedCollectionView.register(CircularProgressCell.self, forCellWithReuseIdentifier: progressIdentifier)
-        completedCollectionView.register(CompletedLabelCell.self, forCellWithReuseIdentifier: completedIdentifier)
         completedCollectionView.translatesAutoresizingMaskIntoConstraints = false
         completedCollectionView.backgroundColor = .backgroundColor
 
@@ -289,7 +293,7 @@ class QuizViewController: UIViewController {
         NSLayoutConstraint.activate([
             completedCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             completedCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            completedCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            completedCollectionView.topAnchor.constraint(equalTo: congratsLabel.bottomAnchor, constant: 50),
             completedCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -304,12 +308,13 @@ class QuizViewController: UIViewController {
         quizRoundResult.difficulty = defaults.integer(forKey: "difficulty")
         quizRoundManager.saveResult(quizRoundResult)
 
-        self.title = ""
+        self.title = "Completed!"
         self.questionLabel.alpha = 0.0
         for button in self.answerButtonCollection {
             button.alpha = 0.0
         }
 
+        setUpProgressView(percentage: Float(score)/10)
         setupCollectionView()
         setupDatasource(score: score, category: category.title)
         loadItems()
@@ -350,10 +355,7 @@ extension QuizViewController {
         static let topPadding: CGFloat = 20
         static let bottomPadding: CGFloat = 40
         static let answerButtonHeight: CGFloat = 60
-
-        static let cornerRadius: CGFloat = 5.0
-        static let shadowRadius: CGFloat = 3.0
-        static let shadowOffset: CGFloat = 2.0
-        static let shadowOpacity: Float = 2.0
+        static let circleRadius: CGFloat = 90
+        static let halfLabelHeight: CGFloat = 15
     }
 }

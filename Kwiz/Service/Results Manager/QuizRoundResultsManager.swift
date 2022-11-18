@@ -27,47 +27,6 @@ class QuizRoundResultsManager {
         return persistanceService.clearAllData()
     }
 
-    func getUsersPopularCategories() -> [PopularCategory] {
-        let allQuizRoundResults = getAllQuizRoundResults()
-        var userPopularCategoriesArray: [PopularCategory] = []
-
-        for result in allQuizRoundResults {
-            guard let resultCategoryName = result.category else { continue }
-            if var popularCategory = userPopularCategoriesArray.filter({ $0.category == resultCategoryName }).first {
-                let index = userPopularCategoriesArray.firstIndex { $0.category == resultCategoryName }!
-                var popularCategoryCount = popularCategory.count
-                popularCategoryCount += 1
-                popularCategory.count = popularCategoryCount
-                userPopularCategoriesArray[index] = popularCategory
-            } else {
-                let newPopularCategory = PopularCategory(category: resultCategoryName, count: 1)
-                userPopularCategoriesArray.append(newPopularCategory)
-            }
-        }
-        return userPopularCategoriesArray
-    }
-
-    func getCategoriesWithTopScores() -> [CategoryTopScore] {
-        let allQuizRoundResults = getAllQuizRoundResults()
-        var categoryTopScores: [CategoryTopScore] = []
-
-        for result in allQuizRoundResults {
-            guard let resultCategoryName = result.category else { continue }
-            guard let finalResult =  result.percentageCorrect else { continue }
-            if var topScore = categoryTopScores.filter({ $0.category == resultCategoryName }).first {
-                let index = categoryTopScores.firstIndex { $0.category == resultCategoryName }!
-                if finalResult > topScore.result {
-                    topScore.result = finalResult
-                    categoryTopScores[index] = topScore
-                }
-            } else {
-                let newTopScore = CategoryTopScore(category: resultCategoryName, result: finalResult)
-                categoryTopScores.append(newTopScore)
-            }
-        }
-        return categoryTopScores
-    }
-
     var todaysResults: [QuizRoundResult] = []
     var yesterdaysResults: [QuizRoundResult] = []
     var earlierResults: [QuizRoundResult] = []

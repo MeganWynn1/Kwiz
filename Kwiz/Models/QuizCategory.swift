@@ -19,7 +19,7 @@ enum QuizCategory: Int, CaseIterable, Codable {
     var urlString: String {
         switch self {
         case .filmAndTv:
-            return "film%20&%20tv"
+            return "film_and_tv"
         case .music:
             return "music"
         case .foodAndDrink:
