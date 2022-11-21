@@ -55,7 +55,6 @@ class SettingsViewController: UIViewController {
         clearDataButtonView.addGestureRecognizer(tapClear)
         emailButtonView.addGestureRecognizer(tapEmail)
 
-        setupVersionsLabel()
         setupScrollView()
         setupDifficultyControl()
         setupDifficultyLabel()
@@ -68,21 +67,6 @@ class SettingsViewController: UIViewController {
     }
 
     // MARK: - Setup
-    private func setupVersionsLabel() {
-        versionLabel.text = "v1.0.0"
-        versionLabel.textColor = .lightGray
-        versionLabel.textAlignment = .center
-        versionLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(versionLabel)
-
-        NSLayoutConstraint.activate([
-            versionLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
-            versionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            versionLabel.heightAnchor.constraint(equalToConstant: 50),
-            versionLabel.widthAnchor.constraint(equalToConstant: 200)
-        ])
-    }
-
     private func setupScrollView() {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
@@ -91,7 +75,7 @@ class SettingsViewController: UIViewController {
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: versionLabel.topAnchor, constant: -10)
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
         ])
     }
 
@@ -187,6 +171,12 @@ class SettingsViewController: UIViewController {
         creditsText.attributedText = NSAttributedString(string: quote, attributes: attributes)
         creditsText.numberOfLines = 0
         creditsStackView.addArrangedSubview(creditsText)
+
+        versionLabel.text = "v1.0.0"
+        versionLabel.textColor = .lightGray
+        versionLabel.textAlignment = .center
+        versionLabel.translatesAutoresizingMaskIntoConstraints = false
+        creditsStackView.addArrangedSubview(versionLabel)
 
         NSLayoutConstraint.activate([
             creditsStackView.topAnchor.constraint(equalTo: clearDataButtonView.bottomAnchor, constant: 40),
