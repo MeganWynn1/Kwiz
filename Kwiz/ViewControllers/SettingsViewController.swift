@@ -39,7 +39,7 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Settings"
-        view.backgroundColor = .settingsBackgroundColor
+        view.backgroundColor = .backgroundColor
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.titleColor]
         let updateButton = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveButtonTapped(_:)))
         updateButton.tintColor = .titleColor

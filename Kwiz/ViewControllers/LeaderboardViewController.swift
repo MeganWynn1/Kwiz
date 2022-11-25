@@ -59,8 +59,8 @@ class LeaderboardViewController: UIViewController {
         segmentedControl.frame = CGRect(x: 0, y: 50, width: view.frame.width, height: 50)
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.selectedSegmentTintColor = .clear
-        segmentedControl.backgroundColor = .white
-        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.secondaryColor], for: .normal)
+        segmentedControl.backgroundColor = .backgroundColor
+        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.darkSegmentedTextColor], for: .normal)
         segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.primaryColor], for: .selected)
 
         view.addSubview(segmentedControl)

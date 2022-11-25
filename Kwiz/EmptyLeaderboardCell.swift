@@ -15,7 +15,7 @@ class EmptyLeaderboardCell: BaseCell {
     // MARK: - Initialise
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .textColor
         contentView.layer.borderColor = UIColor.secondaryColor.cgColor
         contentView.layer.borderWidth = 2
         setupLabel()
@@ -31,7 +31,7 @@ class EmptyLeaderboardCell: BaseCell {
 
     // MARK: - Setup
     private func setupLabel() {
-        noResultsLabel.textColor = .secondaryColor
+        noResultsLabel.textColor = .darkSegmentedTextColor
         noResultsLabel.text = "No Results"
         noResultsLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(noResultsLabel)
